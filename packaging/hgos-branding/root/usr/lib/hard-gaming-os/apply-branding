@@ -60,11 +60,27 @@ if [[ -f /etc/sdboot-manage.conf ]]; then
     echo 'ENTRY_TITLE="Hard Gaming OS"' >> /etc/sdboot-manage.conf
   fi
 fi
+# Bestehende Einträge (vom Installer oder sdboot-manage): „Linux CachyOS Lts“ → „Hard Gaming OS (LTS)“.
+# Der Originaltitel bleibt als Kommentar im Eintrag für restore-branding.
 for entries in /boot/loader/entries /efi/loader/entries /boot/efi/loader/entries; do
   [[ -d $entries ]] || continue
   for entry in "$entries"/*.conf; do
     [[ -f $entry ]] || continue
-    sed -i -E 's/^(title[[:space:]]+)CachyOS( Linux)?/\1Hard Gaming OS/' "$entry"
+    grep -q '^# hgos-original-title: ' "$entry" && continue
+    original="$(sed -n -E 's/^title[[:space:]]+//p' "$entry" | head -n1)"
+    [[ $original == *CachyOS* ]] || continue
+    rest=""
+    for word in $original; do
+      case $word in
+        Linux|CachyOS|linux-cachyos) ;;
+        Lts|LTS|lts|linux-cachyos-lts) rest+=" LTS" ;;
+        *) rest+=" $word" ;;
+      esac
+    done
+    rest="${rest# }"
+    title="Hard Gaming OS${rest:+ ($rest)}"
+    sed -i -E "s|^title[[:space:]].*|title $title|" "$entry"
+    printf '# hgos-original-title: %s\n' "$original" >> "$entry"
   done
 done
 

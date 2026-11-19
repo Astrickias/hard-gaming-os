@@ -16,7 +16,9 @@ for entries in /boot/loader/entries /efi/loader/entries /boot/efi/loader/entries
   [[ -d $entries ]] || continue
   for entry in "$entries"/*.conf; do
     [[ -f $entry ]] || continue
-    sed -i -E 's/^(title[[:space:]]+)Hard Gaming OS/\1CachyOS/' "$entry"
+    original="$(sed -n 's/^# hgos-original-title: //p' "$entry" | head -n1)"
+    [[ -n $original ]] || continue
+    sed -i -E "s|^title[[:space:]].*|title $original|; /^# hgos-original-title: /d" "$entry"
   done
 done
 rm -rf -- "$backup"
