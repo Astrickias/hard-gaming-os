@@ -39,7 +39,7 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument('--settings',type=Path,required=True)
     p.add_argument('--sha256',required=True)
-    p.add_argument('--edition',choices=['gaming','allround'],required=True)
+    p.add_argument('--edition',choices=['gaming'],required=True)
     p.add_argument('--root',type=Path,default=Path(__file__).resolve().parent.parent)
     p.add_argument('--output',type=Path)
     a=p.parse_args()

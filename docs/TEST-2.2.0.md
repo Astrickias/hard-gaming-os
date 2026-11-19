@@ -1,4 +1,4 @@
-# Testbericht 2.1.4 und Prüfliste 2.1.6
+# Testberichte 2.1.4 / 2.1.6 und Prüfliste 2.2.0
 
 ## Ergebnis 2.1.4 Gaming (19.11.2026, virt-manager, QEMU/KVM, UEFI)
 
@@ -35,12 +35,12 @@ Getestet von Dominik, Screenshots sind echte VM-Screenshots.
 
 Bewusst unverändert: Kernel `linux-cachyos`, Repos, Mirrorlisten, Schlüssel, `pacman.conf`, `cachyos-settings`, `cachyos-hooks`, `cachyos-ananicy-rules`, `cachyos-snapper-support`, fish/zsh-Grundkonfiguration, `ID_LIKE="cachyos arch"` in os-release.
 
-## Prüfliste 2.1.6 (Gaming, danach Allround)
+## Prüfliste 2.2.0 (eine Edition)
 
-1. Build: `sudo env HGOS_UPSTREAM_REF=3215497d2e8c5fea90e185affcf973dfa2cf790b HGOS_ACK_EXPERIMENTAL=1 HGOS_ACK_TARGET_UNVERIFIED=1 ./scripts/build-release.sh gaming`. Erwartet: ISO und `.sha256` unter `dist/iso/`.
+1. Build: `sudo env HGOS_UPSTREAM_REF=3215497d2e8c5fea90e185affcf973dfa2cf790b HGOS_ACK_EXPERIMENTAL=1 HGOS_ACK_TARGET_UNVERIFIED=1 ./scripts/build-release.sh`. Erwartet: `dist/iso/Hard-Gaming-OS-2.2.0-beta-x86_64.iso` und `.sha256`.
 2. Live: Bootmenü, Plymouth-Logo, KDE mit HG-Wallpaper und grünem Farbschema, Hello im eigenen Fenster ohne Datenschutz-Tab.
 3. Hello → „Installer starten“. Calamares öffnet sich ohne Handarbeit. Seitenleiste lesbar, Hostname `hardgaming-…`, Bootloader-Bild HG.
-4. Installation mit GRUB, „Festplatte löschen“.
+4. Installation mit GRUB, „Festplatte löschen“. In der Paketauswahl ist „Office & Alltag“ angehakt.
 5. Neustart ohne ISO: HG-GRUB-Theme, HG-Plymouth, Login, Desktop mit HG-Wallpaper, Hello.
 6. Konsole im installierten System:
    ```
@@ -48,6 +48,7 @@ Bewusst unverändert: Kernel `linux-cachyos`, Repos, Mirrorlisten, Schlüssel, `
    cat /etc/lsb-release
    pacman -Qq | grep -i cachy
    cat /var/log/hard-gaming-os-install.log
+   pacman -Q steam lutris heroic-games-launcher kate ark libreoffice-fresh-de
    ```
    Erwartet: Keine der vier ersetzten Grafikpakete und keine CachyOS-Programme mehr in der Liste.
 7. `sudo pacman -Syu` ausführen, danach `cat /etc/os-release` und `grep DISTRIBUTOR /etc/default/grub`: weiterhin Hard Gaming OS.
@@ -56,3 +57,25 @@ Bewusst unverändert: Kernel `linux-cachyos`, Repos, Mirrorlisten, Schlüssel, `
 ## Build-Abbruch 2.1.5 (19.11.2026)
 
 `customize_airootfs.sh` brach beim Installieren von `hgos-branding` ab: Im mkarchiso-Chroot gibt es noch keinen Paket-Schlüsselbund, und `pacman -U` prüft auch bei einem lokalen Paket die Signaturen der Online-Datenbanken (`database 'cachyos' is not valid`). 2.1.6 installiert das Paket mit `pacman-local.conf` ohne Online-Repos, im Live-System und im Zielsystem.
+
+## Ergebnis 2.1.6 Gaming (19.11.2026, virt-manager, QEMU/KVM, UEFI)
+
+Getestet von Dominik, echte VM-Screenshots.
+
+| Schritt | Ergebnis |
+|---|---|
+| ISO-Build mit Prüfsumme | ✅ `023db103ae46ed067bd430b1814aceddbf3d2014916114d2ee8d38a5580ee3a6` |
+| Live-System mit HG-Design, Hello im eigenen Fenster | ✅ |
+| Installer direkt aus Hello, Seitenleiste lesbar, Diashow | ✅ |
+| Installation, Neustart ohne ISO | ✅ |
+| GRUB-Menü und Startbild | ✅ |
+| Wallpaper, Farbschema, fastfetch, Hostname `hardgaming-x8664` | ✅ |
+| `hgos-branding 2.1.6-1`, CachyOS-Grafikpakete entfernt | ✅ |
+| Verbleibende cachyos-Pakete | nur technisch: Kernel, Keyring, Mirrorlisten, settings, hooks, ananicy-rules, drm-awaiter, snapper-support, fish/zsh-config |
+| Legacy-BIOS | nicht getestet |
+
+Offen aus dem Test: fastfetch-Logo türkis statt HG-Grün (in 2.2.0 auf RGB 84,239,97 gestellt). Der Tooltip „Application Launcher“ ist englisch; das ist ein fehlender KDE-Übersetzungstext, kein CachyOS-Branding.
+
+## 2.2.0: eine Edition
+
+Gaming und Allround sind zusammengelegt. Fest installiert: Steam, Lutris, Heroic, MangoHud, GameMode, Kate, Ark, Firefox. LibreOffice (deutsch) ist im Installer als Gruppe „Office & Alltag“ wählbar und standardmäßig angehakt. Intern heißt die Edition weiterhin `gaming`, sichtbar überall nur „Hard Gaming OS“.

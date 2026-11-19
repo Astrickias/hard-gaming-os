@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-usage() { echo "Aufruf: $0 gaming|allround [--execute] [--ref COMMIT_ODER_TAG]" >&2; exit 2; }
-[[ $# -gt 0 ]] || usage
-EDITION="$1"; shift
-[[ "$EDITION" == gaming || "$EDITION" == allround ]] || usage
+usage() { echo "Aufruf: $0 gaming [--execute] [--ref COMMIT_ODER_TAG]" >&2; exit 2; }
+EDITION="gaming"; [[ "${1:-}" == gaming ]] && shift
+[[ "$EDITION" == gaming ]] || usage
 EXECUTE=0; REF="${HGOS_UPSTREAM_REF:-3215497d2e8c5fea90e185affcf973dfa2cf790b}"
 while (($#)); do
  case "$1" in

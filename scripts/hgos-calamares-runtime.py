@@ -57,10 +57,23 @@ def netinstall_branding(config, groups, local_url):
     groups = groups.replace('"CachyOS shell configuration"', '"Shell-Konfiguration"')
     groups = groups.replace('"Shell packages for CachyOS"', '"Optionale Shell-Profile"')
     groups = groups.replace('"needed CachyOS packages"', '"Systempakete und Einstellungen"')
+    if "Office & Alltag" not in groups:
+        groups = groups.rstrip("\n") + "\n" + OFFICE_GROUP
     return config, groups
 
 
 IMAGES = "/usr/share/hard-gaming-os/installer"
+
+# Wählbare Gruppe im Installer (seit 2.2.0 eine Edition für Gaming und Alltag).
+OFFICE_GROUP = """- name: "Office & Alltag"
+  description: "LibreOffice für Dokumente, Tabellen und Präsentationen (deutsch)"
+  hidden: false
+  selected: true
+  critical: false
+  packages:
+    - libreoffice-fresh
+    - libreoffice-fresh-de
+"""
 
 
 def hostname_branding(config):

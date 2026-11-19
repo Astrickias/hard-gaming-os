@@ -80,13 +80,12 @@ def add_syslinux_diagnosis(source):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("stage", type=Path)
-    parser.add_argument("edition", choices=("gaming", "allround"))
+    parser.add_argument("edition", choices=("gaming",))
     args = parser.parse_args()
     stage = args.stage
     profile = stage / "archiso"
     assets = Path(__file__).resolve().parent.parent / "branding/full"
-    edition = args.edition.title() + " Edition"
-    name = f"Hard Gaming OS {edition}"
+    name = "Hard Gaming OS"  # seit 2.2.0 eine Edition
     for path in (profile / "grub").glob("*.cfg"):
         source = path.read_text()
         source, count = re.subn(r'(?m)^(menuentry "[^"\n]*)CachyOS', rf'\g<1>{name}', source)
@@ -121,7 +120,7 @@ def main():
     profiledef = profile / "profiledef.sh"
     replace_once(profiledef, 'iso_publisher="CachyOS <https://cachyos.org>"',
                  'iso_publisher="Hard Gaming Labs <https://hardgaming.net/>"')
-    replace_once(profiledef, 'iso_label="COS_', 'iso_label="HGOS_' + args.edition.upper() + '_')
+    replace_once(profiledef, 'iso_label="COS_', 'iso_label="HGOS_')
     replace_once(profiledef, 'iso_application="CachyOS Live/Rescue DVD"',
                  f'iso_application="{name}"')
     util = stage / "util-iso.sh"

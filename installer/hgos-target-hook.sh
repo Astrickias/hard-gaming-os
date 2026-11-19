@@ -5,7 +5,7 @@
 set -euo pipefail
 EDITION="${1:-}"
 TARGET="${2:-}"
-[[ "$EDITION" == gaming || "$EDITION" == allround ]] || { echo 'Ungültige Edition' >&2; exit 2; }
+[[ "$EDITION" == gaming ]] || { echo 'Ungültige Edition' >&2; exit 2; }
 [[ -n "$TARGET" && -d "$TARGET/etc" && -d "$TARGET/usr" ]] || { echo 'Ungültiges Zielroot' >&2; exit 2; }
 TARGET="$(realpath -e -- "$TARGET")"
 [[ "$TARGET" != / ]] || exit 2

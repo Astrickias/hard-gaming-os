@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-for edition in gaming allround; do
+for edition in gaming; do
  "$ROOT/scripts/prepare-edition.sh" "$edition"
  test -s "$ROOT/build/$edition/packages.txt"
  test -s "$ROOT/build/$edition/overlay/usr/share/hard-gaming-os/hg-os-logo.png"
  test -s "$ROOT/build/$edition/overlay/usr/share/backgrounds/hard-gaming-os/wallpaper-default.jpg"
  grep -qx "$edition" "$ROOT/build/$edition/overlay/usr/share/hard-gaming-os/edition"
 done
-! grep -qx steam "$ROOT/build/allround/packages.txt"
+! test -e "$ROOT/config/editions/allround.packages"
+grep -qx kate "$ROOT/build/gaming/packages.txt"
+! grep -qx libreoffice-fresh "$ROOT/config/editions/gaming.packages"
 grep -qx steam "$ROOT/build/gaming/packages.txt"
 for f in "$ROOT"/scripts/*.sh "$ROOT"/installer/*.sh; do bash -n "$f"; done
-python3 -I -m unittest discover -s "$ROOT/tests" -p 'test_stage_live_branding.py' 2>&1 | tail -n 1
+python3 -I -m unittest discover -s "$ROOT/tests" -p 'test_*.py' 2>&1 | tail -n 1
 grep -q 'https://hardgaming.net/' "$ROOT/apps/hg-welcome/index.html"
 grep -q 'hgos://install' "$ROOT/apps/hg-welcome/index.html"
 grep -q 'hgos://update' "$ROOT/apps/hg-welcome/index.html"

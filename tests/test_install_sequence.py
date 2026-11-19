@@ -14,7 +14,7 @@ class SequenceTests(unittest.TestCase):
             settings=Path(temp)/'settings.conf'
             settings.write_text('sequence:\n  - packages\n  - shellprocess@hgos\n  - umount\n')
             sha=hashlib.sha256(settings.read_bytes()).hexdigest()
-            for edition in ('gaming','allround'):
+            for edition in ('gaming',):
                 manifest=SCRIPT.parents[1]/'config/editions'/f'{edition}.packages'
                 self.assertTrue(mod.audit(settings,sha,edition,manifest)['hgos_hook_present'])
                 with self.assertRaises(ValueError):mod.audit(settings,'0'*64,edition,manifest)

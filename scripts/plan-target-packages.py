@@ -23,7 +23,7 @@ def packages(path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("edition", choices=("gaming", "allround"))
+    parser.add_argument("edition", choices=("gaming",))
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent.parent)
     args = parser.parse_args()
     manifest = args.root / "config" / "editions" / f"{args.edition}.packages"

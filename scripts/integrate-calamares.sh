@@ -3,7 +3,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EDITION="${1:-}"; LIVE="${2:-}"
-[[ "$EDITION" == gaming || "$EDITION" == allround ]] || { echo 'Edition gaming|allround erforderlich' >&2; exit 2; }
+[[ "$EDITION" == gaming ]] || { echo 'Edition gaming erforderlich' >&2; exit 2; }
 [[ -n "$LIVE" && -d "$LIVE/etc" && -d "$LIVE/usr" ]] || { echo 'LIVE-ROOT ungültig' >&2; exit 2; }
 LIVE="$(realpath -e -- "$LIVE")"
 [[ "$LIVE" != / ]] || exit 2

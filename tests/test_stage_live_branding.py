@@ -112,7 +112,7 @@ class StageLiveBranding(unittest.TestCase):
         self.assertIn("vmlinuz-linux-cachyos-lts", " ".join(diag_lines))
         regular = [l for l in grub.splitlines() if l.strip().startswith("linux ") and "ttyS0" not in l]
         self.assertTrue(all(("quiet splash" in l) != ("nomodeset" in l) for l in regular))
-        self.assertIn("Hard Gaming OS Gaming Edition", grub)
+        self.assertIn("Hard Gaming OS (linux-cachyos)", grub)
 
         sys_cfg = (profile / "syslinux/archiso_sys-linux.cfg").read_text()
         self.assertIn("LABEL arch64_hgosdiag", sys_cfg)
@@ -126,14 +126,14 @@ class StageLiveBranding(unittest.TestCase):
 
         self.assertIn("udev plymouth microcode",
                       (profile / "airootfs/etc/mkinitcpio.conf.d/archiso.conf").read_text())
-        self.assertIn('iso_label="HGOS_GAMING_', (profile / "profiledef.sh").read_text())
+        self.assertIn('iso_label="HGOS_', (profile / "profiledef.sh").read_text())
         login = (profile / "airootfs/etc/plasmalogin.conf").read_text()
         self.assertIn("User=liveuser", login)
         self.assertIn("wallpaper-default.jpg", login)
 
     def test_missing_plasmalogin_fails(self):
         make_stage(self.tmp, with_login=False)
-        result = self.run_script("allround")
+        result = self.run_script("gaming")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("plasmalogin.conf fehlt", result.stderr)
 

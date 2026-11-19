@@ -3,7 +3,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EDITION="${1:-}"
-[[ "$EDITION" == gaming || "$EDITION" == allround ]] || { echo 'Aufruf: prepare-calamares.sh gaming|allround' >&2; exit 2; }
+[[ "$EDITION" == gaming ]] || { echo 'Aufruf: prepare-calamares.sh gaming' >&2; exit 2; }
 "$ROOT/scripts/prepare-edition.sh" "$EDITION" >/dev/null
 OUT="$ROOT/build/$EDITION/calamares"
 mkdir -p "$OUT/usr/share/hard-gaming-os/target-payload/$EDITION" "$OUT/usr/local/libexec" "$OUT/usr/share/hard-gaming-os/manifests" "$OUT/integration"

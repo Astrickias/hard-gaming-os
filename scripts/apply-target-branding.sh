@@ -2,10 +2,10 @@
 # Installiert nur das HGOS-Branding in ein bereits vorhandenes Zielroot.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-usage() { echo "Aufruf: $0 gaming|allround --target /pfad/zum/mountpoint" >&2; exit 2; }
+usage() { echo "Aufruf: $0 gaming --target /pfad/zum/mountpoint" >&2; exit 2; }
 [[ $# == 3 && "$2" == --target ]] || usage
 EDITION="$1"; TARGET="$3"
-[[ "$EDITION" == gaming || "$EDITION" == allround ]] || usage
+[[ "$EDITION" == gaming ]] || usage
 [[ -d "$TARGET" && ! -L "$TARGET" ]] || { echo "Zielroot fehlt oder ist ein Symlink" >&2; exit 3; }
 TARGET="$(realpath -e -- "$TARGET")"
 [[ "$TARGET" != / && "$TARGET" != "$ROOT" && "$TARGET" != "$ROOT"/* ]] || { echo "Unsicheres Zielroot" >&2; exit 3; }

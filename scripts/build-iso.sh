@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-usage() { echo "Aufruf: $0 gaming|allround --profile /pfad/zum/geprueften/cachyos-archiso-profil [--execute]" >&2; exit 2; }
+usage() { echo "Aufruf: $0 gaming --profile /pfad/zum/geprueften/cachyos-archiso-profil [--execute]" >&2; exit 2; }
 [[ $# -ge 3 ]] || usage
 EDITION="$1"; shift
-[[ "$EDITION" == gaming || "$EDITION" == allround ]] || usage
+[[ "$EDITION" == gaming ]] || usage
 [[ "$1" == --profile && -n "${2:-}" ]] || usage
 PROFILE="$2"; shift 2
 EXECUTE=0
