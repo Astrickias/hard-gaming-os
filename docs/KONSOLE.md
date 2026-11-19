@@ -49,10 +49,12 @@ zurück zum Anmeldebildschirm und dort „Plasma“ wählen.
 Protokoll: `~/.local/state/hard-gaming-konsole.log`. Einstellungen:
 `/etc/hard-gaming-os/konsole.conf`, pro Benutzer `~/.config/hard-gaming-konsole.conf`.
 
+Seit 2.7.2 öffnet sich das Menü auch dann, wenn das Intro sein Ende nicht meldet. Innerhalb von gamescope nutzt die Oberfläche explizit XWayland für Fenstererkennung und Eingabefokus.
+
 ## Testen – zuerst nur in einer VM
 
 1. Hard-Gaming-OS-VM starten (virt-manager), System aktualisieren.
-2. `sudo pacman -Sy hgos-konsole` (oder Hello → Gaming → Hard Gaming Konsole).
+2. `sudo pacman -Syu --needed hgos-konsole` (oder Hello → Gaming → Hard Gaming Konsole).
 3. Fenster-Modus: Startmenü → Hard Gaming Konsole.
 4. Sitzung: abmelden, unten im Anmeldebildschirm „Hard Gaming Konsole“ wählen.
    In einer VM ohne echte 3D-Beschleunigung startet gamescope meist nicht –

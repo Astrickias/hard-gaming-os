@@ -173,20 +173,12 @@ install -Dm644 "$ROOT/packaging/hgos-branding/pacman-local.conf" "$PROFILE/airoo
 # Execute CachyOS native build pipeline from isolated staged upstream checkout.
 cd "$STAGE"
 touch "$STAGE/.hgos-build-start"
-# Das CachyOS-Skript meldet auch nach fertiger ISO teils einen Fehler über seinen
-# EXIT/INT-Trap ("Aborted by user"). Entscheidend ist, ob eine neue ISO entstand.
-set +e
-./buildiso.sh -p desktop -w
-rc=$?
-set -e
+# Bei Fehlern bleibt das Image für die Diagnose im Staging-Verzeichnis.
+./buildiso.sh -p desktop -w || {
+  rc=$?
+  echo "Upstream-Build fehlgeschlagen (Status $rc). Ausgaben unter $STAGE/out bleiben ungeprüft." >&2
+  exit "$rc"
+}
 mapfile -d '' NEW_ISOS < <(find "$STAGE/out" -type f -name '*.iso' -newer "$STAGE/.hgos-build-start" -size +1G -print0 2>/dev/null)
-if (( rc != 0 )); then
-  if [[ ${#NEW_ISOS[@]} -eq 1 ]]; then
-    echo "Hinweis: buildiso.sh endete mit Status $rc, die ISO ist aber vollständig: ${NEW_ISOS[0]}" >&2
-  else
-    echo "buildiso.sh fehlgeschlagen (Status $rc), keine vollständige ISO gefunden" >&2
-    exit "$rc"
-  fi
-fi
 [[ ${#NEW_ISOS[@]} -eq 1 ]] || { echo "Erwartet genau eine neue ISO, gefunden: ${#NEW_ISOS[@]}" >&2; exit 7; }
 printf 'Upstream-ISO-Ausgabe: %s\n' "${NEW_ISOS[0]}"

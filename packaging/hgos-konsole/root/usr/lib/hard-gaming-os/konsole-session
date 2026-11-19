@@ -26,7 +26,7 @@ PIPE="/run/user/$UID/opengamepadui/opengamepadui-0"
 rm -f "$PIPE"   # alte Markierung weg: die Oberfläche legt sie neu an, sobald sie geladen ist
 start=$SECONDS
 # shellcheck disable=SC2046,SC2086
-gamescope -e -f --xwayland-count 2 $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" >>"$KONSOLE_LOG" 2>&1 &
+gamescope -e -f --xwayland-count 2 $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" --display-driver x11 >>"$KONSOLE_LOG" 2>&1 &
 gs=$!
 
 # Wächter: Ist die Konsolen-Oberfläche nach der Wartezeit nicht geladen, hängt der
@@ -46,7 +46,7 @@ fi
 
 wait "$gs"; rc=$?
 log "Konsole beendet (Code $rc nach $((SECONDS - start)) s)"
-if (( rc != 0 && SECONDS - start < 20 )); then
+if (( rc != 0 )) || [[ ${ok:-0} != 1 ]]; then
   desktop "Konsole ist beim Start abgebrochen (Code $rc)"
 fi
 exit 0

@@ -113,6 +113,18 @@ def main() -> None:
          '\tupdate_available.emit(false)\n'
          '\treturn\n', 1)
 
+    # Der erste Menüstatus hängt upstream allein vom Ende des Videos ab.
+    # Auch bei fehlendem Decoder-Signal das Menü einmalig öffnen.
+    ui = "core/ui/card_ui/card_ui.gd"
+    edit(ui, "var PID: int", "var boot_completed := false\nvar PID: int", 1)
+    edit(ui, "boot_video.finished.connect(_on_boot_video_player_finished)",
+         "boot_video.finished.connect(_on_boot_video_player_finished)\n"
+         "\tget_tree().create_timer(6.0).timeout.connect(_on_boot_video_player_finished)", 1)
+    edit(ui, "func _on_boot_video_player_finished() -> void:\n",
+         "func _on_boot_video_player_finished() -> void:\n"
+         "\tif boot_completed:\n\t\treturn\n"
+         "\tboot_completed = true\n\tboot_video.stop()\n", 1)
+
     # 5. Startvideo (Upstream-Logo-Animation) durch Hard-Gaming-Intro ersetzen
     if VIDEO is not None:
         if not VIDEO.is_file() or VIDEO.stat().st_size < 1024:

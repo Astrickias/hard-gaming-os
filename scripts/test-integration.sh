@@ -8,9 +8,15 @@ for edition in gaming; do
  test -s "$ROOT/build/$edition/overlay/usr/share/backgrounds/hard-gaming-os/wallpaper-default.jpg"
  grep -qx "$edition" "$ROOT/build/$edition/overlay/usr/share/hard-gaming-os/edition"
 done
-! test -e "$ROOT/config/editions/allround.packages"
+if test -e "$ROOT/config/editions/allround.packages"; then
+  echo "Veraltete Allround-Edition vorhanden" >&2
+  exit 1
+fi
 grep -qx kate "$ROOT/build/gaming/packages.txt"
-! grep -qx libreoffice-fresh "$ROOT/config/editions/gaming.packages"
+if grep -qx libreoffice-fresh "$ROOT/config/editions/gaming.packages"; then
+  echo "LibreOffice muss optional bleiben" >&2
+  exit 1
+fi
 grep -qx steam "$ROOT/build/gaming/packages.txt"
 for f in "$ROOT"/scripts/*.sh "$ROOT"/installer/*.sh; do bash -n "$f"; done
 python3 -I -m unittest discover -s "$ROOT/tests" -p 'test_*.py' 2>&1 | tail -n 1
@@ -47,16 +53,19 @@ grep -q '^HGOS_REPO_URL=' "$ROOT/config/release.env"
 grep -q 'https://github.com/storytold/craft-launcher/releases' "$ROOT/apps/hg-welcome/index.html"
 # Hard Gaming Konsole (hgos-konsole)
 K="$ROOT/packaging/hgos-konsole"
-for f in PKGBUILD hgos-konsole.install brand-konsole.py root/usr/bin/hard-gaming-konsole root/usr/lib/hard-gaming-os/konsole-session \
+for f in PKGBUILD hgos-konsole.install brand-konsole.py root/usr/bin/hard-gaming-konsole root/usr/bin/hgos-konsole-beenden root/usr/lib/hard-gaming-os/konsole-session \
          root/usr/lib/hard-gaming-os/konsole-common.sh root/etc/hard-gaming-os/konsole.conf \
          root/usr/share/wayland-sessions/hard-gaming-konsole.desktop root/usr/share/applications/hard-gaming-konsole.desktop; do
   test -e "$K/$f" || { echo "Konsolen-Paket unvollständig: $f" >&2; exit 1; }
 done
-for f in "$K"/root/usr/bin/hard-gaming-konsole "$K"/root/usr/bin/hgos-konsole-beenden "$K"/root/usr/lib/hard-gaming-os/konsole-*; do bash -n "$f"; done
+for f in "$K"/root/usr/bin/hard-gaming-konsole "$K"/root/usr/lib/hard-gaming-os/konsole-*; do bash -n "$f"; done
 python3 -I -m py_compile "$K/brand-konsole.py"
 grep -q '_ogui_commit=a79179dc5bc737b3ccaf2b7f66bd67d76f615e4c' "$K/PKGBUILD"
 grep -q 'OGUI_FEATURE_UPDATER=0' "$K/root/usr/lib/hard-gaming-os/konsole-common.sh"
-! grep -q 'VK_ICD_FILENAMES' "$K"/root/usr/lib/hard-gaming-os/konsole-* "$K/root/usr/bin/hard-gaming-konsole"
+if grep -Eq '^[[:space:]]*([^#[:space:]].*)?VK_ICD_FILENAMES=' "$K"/root/usr/lib/hard-gaming-os/konsole-* "$K/root/usr/bin/hard-gaming-konsole"; then
+  echo "Konsolenstart erzwingt einen Vulkan-Treiber" >&2
+  exit 1
+fi
 grep -q 'hgos://konsole' "$ROOT/apps/hg-welcome/qml/Main.qml"
 grep -q 'hgos://konsole' "$ROOT/apps/hg-welcome/hgos-url"
 echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket, Update Center, Hello-App, Umstiegspaket, Paket-Repo und Konsole'
