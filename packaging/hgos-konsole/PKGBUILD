@@ -1,0 +1,73 @@
+# Maintainer: Hard Gaming Labs <https://hardgaming.net/>
+# Hard Gaming Konsole – Konsolen-Oberfläche für Hard Gaming OS.
+# Fork von OpenGamepadUI (ShadowBlip, GPLv3): aus dem Quellcode gebaut, mit
+# Hard-Gaming-Name, -Logo, -Farben und -Startvideo; Selbst-Updater abgeschaltet.
+# Baut nur auf einem Host mit Netz (Rust-Crates, Godot-Exportvorlagen).
+pkgname=hgos-konsole
+pkgver=@VERSION@
+pkgrel=1
+_ogui_version=0.47.0
+_ogui_commit=a79179dc5bc737b3ccaf2b7f66bd67d76f615e4c # Tag v0.47.0
+pkgdesc="Hard Gaming Konsole – Spiele aus Steam, Heroic und Lutris im Konsolenmodus (basiert auf OpenGamepadUI ${_ogui_version})"
+arch=('x86_64')
+url="https://hardgaming.net/"
+license=('GPL-3.0-or-later')
+depends=('glibc' 'gcc-libs' 'libx11' 'libxres' 'libxcb' 'libxext' 'libxau' 'libxdmcp'
+         'gamescope' 'inputplumber' 'vulkan-tools' 'mesa-utils' 'pciutils' 'libcap')
+makedepends=('git' 'godot' 'rust' 'clang' 'make' 'wget' 'unzip' 'python' 'ffmpeg')
+optdepends=('steam: Steam-Spiele in der Konsole'
+            'lutris: Lutris-Spiele in der Konsole'
+            'heroic-games-launcher: Epic-, GOG- und Amazon-Spiele'
+            'wireplumber: Lautstärke in den Schnelleinstellungen'
+            'networkmanager: WLAN in den Schnelleinstellungen'
+            'bluez: Bluetooth in den Schnelleinstellungen'
+            'powerstation: Leistungsprofile (TDP) auf Handhelds')
+provides=('opengamepadui')
+conflicts=('opengamepadui' 'opengamepadui-bin' 'opengamepadui-git')
+options=('!strip' '!debug' '!lto')
+install=hgos-konsole.install
+source=("OpenGamepadUI::git+https://github.com/ShadowBlip/OpenGamepadUI.git#commit=${_ogui_commit}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "$srcdir/OpenGamepadUI"
+  local gv
+  gv="$(godot --version 2>/dev/null | head -n1)"
+  [[ $gv == 4.7.* ]] || { echo "Godot 4.7 benötigt, gefunden: ${gv:-keins}" >&2; return 1; }
+
+  # Hard-Gaming-Intro statt Upstream-Startvideo
+  ffmpeg -hide_banner -loglevel error -y \
+    -f lavfi -i color=c=0x101b16:s=1280x720:d=3:r=30 \
+    -loop 1 -t 3 -i "$startdir/logo.png" \
+    -filter_complex "[1:v]scale=360:-1,format=rgba,fade=in:st=0.2:d=0.8:alpha=1,fade=out:st=2.2:d=0.7:alpha=1[l];[0:v][l]overlay=(W-w)/2:(H-h)/2:shortest=1,format=yuv420p" \
+    -c:v libtheora -q:v 7 -an "$srcdir/hgos-boot.ogv"
+
+  python3 "$startdir/brand-konsole.py" "$srcdir/OpenGamepadUI" "$startdir/logo-256.png" "$srcdir/hgos-boot.ogv"
+}
+
+build() {
+  cd "$srcdir/OpenGamepadUI"
+  export CARGO_HOME="$srcdir/cargo"
+  # Erst Erweiterungen, dann Import (zweimal, wie upstream force-import), dann Export.
+  make extensions
+  make force-import
+  make build
+  make rootfs
+}
+
+package() {
+  cd "$srcdir/OpenGamepadUI/.cache/rootfs"
+  make install PREFIX="$pkgdir/usr" INSTALL_PREFIX=/usr ARCH="$CARCH"
+
+  # Upstream-Starter/-Symbol nicht sichtbar anbieten: eigener Starter, eigenes Symbol.
+  rm -f "$pkgdir/usr/share/applications/opengamepadui.desktop" \
+        "$pkgdir/usr/share/icons/hicolor/scalable/apps/opengamepadui.svg"
+  # Selbst-Updater-Dienst (systemd-sysext) wird nicht gebraucht: Updates über [hardgaming].
+  rm -f "$pkgdir/usr/lib/systemd/user/systemd-sysext-updater.service" \
+        "$pkgdir/usr/share/polkit-1/actions/org.shadowblip.nixos_updater.policy"
+
+  cp -a "$startdir/root/." "$pkgdir/"
+  chmod 755 "$pkgdir/usr/bin/hard-gaming-konsole" "$pkgdir/usr/lib/hard-gaming-os/konsole-session"
+  install -Dm644 "$startdir/logo-256.png" "$pkgdir/usr/share/icons/hicolor/256x256/apps/hard-gaming-konsole.png"
+  install -Dm644 "$srcdir/OpenGamepadUI/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

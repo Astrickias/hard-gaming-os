@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hard Gaming Konsole
+GenericName=Konsolenmodus
+Comment=Konsolen-Oberfläche im Fenster ausprobieren
+Icon=hard-gaming-konsole
+Exec=/usr/bin/hard-gaming-konsole %u
+Terminal=false
+Categories=Game;
+MimeType=x-scheme-handler/ogui;

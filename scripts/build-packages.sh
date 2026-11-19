@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Baut die Hard-Gaming-Pakete (hgos-branding, hgos-update-center) mit makepkg.
+# Baut die Hard-Gaming-Pakete (hgos-branding, hgos-update-center, …) mit makepkg.
+# hgos-konsole (Fork von OpenGamepadUI) nur mit HGOS_BUILD_KONSOLE=1 – braucht Netz,
+# Godot 4.7, Rust und dauert deutlich länger; gebaut wird es im GitHub-Workflow.
 # Muss auf einem Arch/CachyOS-Host laufen. Aufruf: build-packages.sh AUSGABEVERZEICHNIS
 # Unter sudo läuft makepkg als aufrufender Benutzer ($SUDO_USER).
 set -euo pipefail
@@ -17,6 +19,8 @@ fi
 
 build_pkg() { # name [zusatzschritt]
   local name=$1 work="$ROOT/build/pkg/$1" flags=(-f --noconfirm)
+  # HGOS_NUR_PAKET=name baut nur dieses eine Paket (z. B. im Workflow die Konsole getrennt).
+  [[ -z ${HGOS_NUR_PAKET:-} || $HGOS_NUR_PAKET == "$name" ]] || return 0
   # Reine Daten-Pakete (arch=any) brauchen ihre Laufzeitabhängigkeiten nicht auf dem Buildhost.
   [[ $name == hgos-update-center ]] || flags+=(--nodeps)
   rm -rf -- "$work"; mkdir -p "$work"
@@ -67,6 +71,18 @@ keyring_extra() { # öffentlicher Schlüssel und Repo-Adresse
   sed -i "s|@REPO_URL@|$HGOS_REPO_URL|" "$1/root/usr/lib/hard-gaming-os/pacman-repo"
 }
 
+konsole_extra() { # Hard-Gaming-Logo für Programmsymbol und Startvideo
+  python3 - "$ROOT/assets/HG OS.png" "$1" <<'PY'
+import sys
+from pathlib import Path
+from PIL import Image
+src, work = Path(sys.argv[1]), Path(sys.argv[2])
+img = Image.open(src).convert("RGBA")
+img.resize((512, 512), Image.LANCZOS).save(work / "logo.png")
+img.resize((256, 256), Image.LANCZOS).save(work / "logo-256.png")
+PY
+}
+
 if [[ -s "$ROOT/keys/hardgaming.gpg" && -s "$ROOT/keys/hardgaming-trusted" ]]; then
   build_pkg hgos-keyring keyring_extra
 else
@@ -75,3 +91,8 @@ fi
 build_pkg hgos-branding branding_extra
 build_pkg hgos-update-center
 build_pkg hgos-umstieg umstieg_extra
+if [[ ${HGOS_BUILD_KONSOLE:-0} == 1 ]]; then
+  build_pkg hgos-konsole konsole_extra
+else
+  echo 'Hinweis: hgos-konsole übersprungen (nur mit HGOS_BUILD_KONSOLE=1, siehe docs/KONSOLE.md).' >&2
+fi

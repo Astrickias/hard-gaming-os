@@ -45,4 +45,18 @@ bash -n "$ROOT/packaging/hgos-keyring/root/usr/lib/hard-gaming-os/pacman-repo"
 python3 -c 'import sys,yaml; yaml.safe_load(open(sys.argv[1]))' "$ROOT/.github/workflows/pakete.yml" 2>/dev/null || python3 -c 'import sys; open(sys.argv[1]).read()' "$ROOT/.github/workflows/pakete.yml"
 grep -q '^HGOS_REPO_URL=' "$ROOT/config/release.env"
 grep -q 'https://github.com/storytold/craft-launcher/releases' "$ROOT/apps/hg-welcome/index.html"
-echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket, Update Center, Hello-App, Umstiegspaket und Paket-Repo'
+# Hard Gaming Konsole (hgos-konsole)
+K="$ROOT/packaging/hgos-konsole"
+for f in PKGBUILD hgos-konsole.install brand-konsole.py root/usr/bin/hard-gaming-konsole root/usr/lib/hard-gaming-os/konsole-session \
+         root/usr/lib/hard-gaming-os/konsole-common.sh root/etc/hard-gaming-os/konsole.conf \
+         root/usr/share/wayland-sessions/hard-gaming-konsole.desktop root/usr/share/applications/hard-gaming-konsole.desktop; do
+  test -e "$K/$f" || { echo "Konsolen-Paket unvollständig: $f" >&2; exit 1; }
+done
+for f in "$K"/root/usr/bin/hard-gaming-konsole "$K"/root/usr/lib/hard-gaming-os/konsole-*; do bash -n "$f"; done
+python3 -I -m py_compile "$K/brand-konsole.py"
+grep -q '_ogui_commit=a79179dc5bc737b3ccaf2b7f66bd67d76f615e4c' "$K/PKGBUILD"
+grep -q 'OGUI_FEATURE_UPDATER=0' "$K/root/usr/lib/hard-gaming-os/konsole-common.sh"
+! grep -q 'VK_ICD_FILENAMES' "$K"/root/usr/lib/hard-gaming-os/konsole-* "$K/root/usr/bin/hard-gaming-konsole"
+grep -q 'hgos://konsole' "$ROOT/apps/hg-welcome/qml/Main.qml"
+grep -q 'hgos://konsole' "$ROOT/apps/hg-welcome/hgos-url"
+echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket, Update Center, Hello-App, Umstiegspaket, Paket-Repo und Konsole'

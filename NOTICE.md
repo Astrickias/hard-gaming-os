@@ -8,11 +8,12 @@ Hard Gaming OS basiert auf CachyOS und Arch Linux. Pakete, Kernel, Paketquellen 
 |---|---|---|
 | Live-ISO-Profil | [CachyOS-Live-ISO](https://github.com/CachyOS/CachyOS-Live-ISO), Commit `3215497d2e8c5fea90e185affcf973dfa2cf790b`, beim Build geladen | GPL-3.0 |
 | Installer | [Calamares](https://calamares.io/) in der CachyOS-Variante, zur Laufzeit geladen | GPL-3.0-or-later |
+| Hard Gaming Konsole (`hgos-konsole`) | Fork von [OpenGamepadUI](https://github.com/ShadowBlip/OpenGamepadUI) (ShadowBlip), Tag `v0.47.0` = Commit `a79179dc5bc737b3ccaf2b7f66bd67d76f615e4c`; Änderungen: `packaging/hgos-konsole/brand-konsole.py` | GPL-3.0-or-later |
 | Hard Gaming Update Center | Fork von [cachy-updater](https://github.com/akanbaz/cachy-updater) (akanbaz), Commit `3011d681a65f2bb8d3193f39c384bdf75094db2b` | GPL-3.0-or-later |
 
 ## Eigener Code
 
-Skripte, Konfiguration, Hello und Paketdefinitionen in diesem Repository: © Hard Gaming Labs. Teile, die GPL-Code verändern oder erweitern (z. B. `packaging/hgos-update-center`), stehen unter GPL-3.0-or-later.
+Skripte, Konfiguration, Hello und Paketdefinitionen in diesem Repository: © Hard Gaming Labs. Teile, die GPL-Code verändern oder erweitern (z. B. `packaging/hgos-update-center`, `packaging/hgos-konsole`), stehen unter GPL-3.0-or-later.
 
 ## Marke
 

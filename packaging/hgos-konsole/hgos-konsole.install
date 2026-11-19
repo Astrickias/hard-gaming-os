@@ -1,0 +1,18 @@
+post_install() {
+  setcap 'cap_sys_nice=eip' /usr/share/opengamepadui/opengamepad-ui.x86_64 2>/dev/null || true
+  # InputPlumber: Controller-Steuerung der Konsole (übernimmt Controller nur, solange die Konsole läuft)
+  systemctl enable --now inputplumber.service >/dev/null 2>&1 || true
+  echo ">>> Hard Gaming Konsole installiert."
+  echo ">>> Ausprobieren: Startmenü → Hard Gaming Konsole (Fenster)"
+  echo ">>> Als Sitzung: abmelden und im Anmeldebildschirm „Hard Gaming Konsole“ wählen."
+  echo ">>> Spiele: Steam-/Lutris-Erweiterung in der Konsole unter Einstellungen → Erweiterungen."
+}
+
+post_upgrade() {
+  setcap 'cap_sys_nice=eip' /usr/share/opengamepadui/opengamepad-ui.x86_64 2>/dev/null || true
+}
+
+post_remove() {
+  # inputplumber bleibt installiert (Abhängigkeit), läuft aber nicht mehr dauerhaft.
+  systemctl disable --now inputplumber.service >/dev/null 2>&1 || true
+}
