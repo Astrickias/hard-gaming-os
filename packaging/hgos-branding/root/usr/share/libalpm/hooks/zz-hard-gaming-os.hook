@@ -1,0 +1,16 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = filesystem
+Target = lsb-release
+Target = grub
+Target = grub-btrfs
+Target = plymouth
+Target = cachyos-hooks
+Target = cachyos-settings
+
+[Action]
+Description = Hard Gaming OS: Branding wiederherstellen
+When = PostTransaction
+Exec = /usr/lib/hard-gaming-os/apply-branding

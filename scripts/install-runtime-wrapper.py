@@ -13,7 +13,7 @@ def patch(source):
         if source.count(line) != 1:
             raise ValueError("Unbekannter Installationsschritt")
         source = source.replace(line, line + ' || exit 1', 1)
-    return source.replace(needle, 'sudo /usr/local/libexec/hgos-calamares-runtime /etc/calamares/settings.conf || exit 1\n'+needle,1)
+    return source.replace(needle, 'sudo /usr/local/libexec/hgos-calamares-libfix || exit 1\n    sudo /usr/local/libexec/hgos-calamares-runtime /etc/calamares/settings.conf || exit 1\n    '+needle,1)
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('file',type=Path); a=p.parse_args()

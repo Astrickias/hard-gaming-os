@@ -1,0 +1,20 @@
+# Hard Gaming OS – Branding-Paket
+# Gebaut von scripts/build-branding-package.sh (nicht direkt aus diesem Ordner).
+pkgname=hgos-branding
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc="Hard Gaming OS: GRUB-Theme, Plymouth, Wallpaper, Plasma-Design, fastfetch-Logo"
+arch=(any)
+url="https://hardgaming.net/"
+license=(LicenseRef-HardGaming)
+depends=(plymouth)
+# Ersetzt ausschließlich die sichtbaren CachyOS-Grafikpakete. Technische Pakete
+# (Kernel, Repos, Schlüssel, Einstellungen) bleiben unangetastet.
+provides=(cachyos-plymouth-theme cachyos-plymouth-bootanimation cachyos-grub-theme cachyos-iridescent-kde)
+conflicts=(cachyos-plymouth-theme cachyos-plymouth-bootanimation cachyos-grub-theme cachyos-iridescent-kde)
+backup=(etc/xdg/fastfetch/config.jsonc)
+install=hgos-branding.install
+
+package() {
+  cp -a "$startdir/root/." "$pkgdir/"
+}

@@ -1,0 +1,9 @@
+post_install() {
+  /usr/lib/hard-gaming-os/apply-branding
+  echo "Hard Gaming OS: Branding aktiv. GRUB und initramfs beim nächsten Kernel-Update oder mit"
+  echo "  sudo grub-mkconfig -o /boot/grub/grub.cfg && sudo mkinitcpio -P"
+  echo "aktualisieren."
+}
+post_upgrade() {
+  /usr/lib/hard-gaming-os/apply-branding
+}

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Hard Gaming OS – sichtbares Branding (erneut) anwenden.
+# Läuft nach Installation von hgos-branding und per pacman-Hook nach Updates von
+# filesystem, lsb-release, grub und plymouth. Baut weder GRUB noch initramfs neu.
+set -euo pipefail
+share=/usr/share/hard-gaming-os
+
+if [[ -s $share/os-release ]]; then
+  install -m644 "$share/os-release" /etc/os-release.hgos-new
+  mv -f /etc/os-release.hgos-new /etc/os-release
+fi
+[[ -s $share/issue ]] && install -m644 "$share/issue" /etc/issue
+cat > /etc/lsb-release <<'LSB'
+DISTRIB_ID="HardGamingOS"
+DISTRIB_RELEASE="rolling"
+DISTRIB_DESCRIPTION="Hard Gaming OS"
+LSB
+
+set_grub() { # Schlüssel in /etc/default/grub setzen oder ergänzen
+  local key=$1 value=$2 file=/etc/default/grub
+  if grep -qE "^#?[[:space:]]*$key=" "$file"; then
+    sed -i -E "s|^#?[[:space:]]*$key=.*|$key=$value|" "$file"
+  else
+    printf '%s=%s\n' "$key" "$value" >> "$file"
+  fi
+}
+if [[ -f /etc/default/grub ]]; then
+  set_grub GRUB_DISTRIBUTOR '"Hard Gaming OS"'
+  set_grub GRUB_THEME '"/usr/share/grub/themes/hard-gaming-os/theme.txt"'
+fi
+if [[ -f /etc/default/grub-btrfs/config ]]; then
+  sed -i -E 's|^#?[[:space:]]*GRUB_BTRFS_SUBMENUNAME=.*|GRUB_BTRFS_SUBMENUNAME="Hard Gaming OS Snapshots"|' /etc/default/grub-btrfs/config
+  grep -q '^GRUB_BTRFS_SUBMENUNAME=' /etc/default/grub-btrfs/config \
+    || echo 'GRUB_BTRFS_SUBMENUNAME="Hard Gaming OS Snapshots"' >> /etc/default/grub-btrfs/config
+fi
+
+if command -v plymouth-set-default-theme >/dev/null && [[ -d /usr/share/plymouth/themes/hard-gaming-os ]]; then
+  plymouth-set-default-theme hard-gaming-os
+fi
+exit 0

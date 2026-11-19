@@ -62,7 +62,11 @@ sed -i 's/\bCachyOS\b/hardgamingos-live/gI' "$PROFILE/airootfs/etc/hosts"
 sed -i '/^SigLevel = Optional TrustAll$/d' "$PROFILE/airootfs/etc/pacman.conf"
 install -d "$PROFILE/airootfs/etc/plymouth"
 printf '[Daemon]\nTheme=hard-gaming-os\n' > "$PROFILE/airootfs/etc/plymouth/plymouthd.conf"
-sed -i '/^file_permissions=(/a\  ["/usr/local/libexec/hgos-plasma-wallpaper"]="0:0:755"' "$PROFILE/profiledef.sh"
+# mkarchiso setzt Dateirechte nur über file_permissions: alle Overlay-Programme freigeben.
+while IFS= read -r -d '' file; do
+  rel="/${file#"$OVERLAY/"}"
+  sed -i "/^file_permissions=(/a\\  [\"$rel\"]=\"0:0:755\"" "$PROFILE/profiledef.sh"
+done < <(find "$OVERLAY/usr/local/bin" "$OVERLAY/usr/local/libexec" -type f -print0 2>/dev/null)
 # HGOS Calamares integration must land in the airootfs used by buildiso.
 # Upstream may install/overwrite Calamares config via packages at runtime:
 # this is an integration candidate and requires a live ISO verification.
@@ -75,6 +79,10 @@ if [[ -f "$LAUNCHER" ]]; then
   python3 "$ROOT/scripts/install-runtime-wrapper.py" "$LAUNCHER"
   install -m 0755 "$ROOT/scripts/hgos-calamares-runtime.py" "$CAL_ROOT/usr/local/libexec/hgos-calamares-runtime"
   install -m 0755 "$ROOT/installer/hgos-target-hook.sh" "$CAL_ROOT/usr/local/libexec/hgos-target-hook"
+  install -m 0755 "$ROOT/installer/hgos-install-branding.sh" "$CAL_ROOT/usr/local/libexec/hgos-install-branding"
+  install -m 0755 "$ROOT/installer/hgos-calamares-libfix.sh" "$CAL_ROOT/usr/local/libexec/hgos-calamares-libfix"
+  install -Dm 0755 "$ROOT/installer/hgos-install.sh" "$CAL_ROOT/usr/local/bin/hgos-install"
+  install -Dm 0644 -t "$CAL_ROOT/usr/share/hard-gaming-os/installer" "$ROOT"/installer/calamares/images/*.png
   cp -a "$ROOT/installer/calamares/branding/hardgamingos" "$CAL_ROOT/usr/share/calamares/branding/"
   install -Dm755 "$ROOT/scripts/audit-target-packages.py" "$CAL_ROOT/usr/local/libexec/hgos-audit-target-packages"
   install -Dm644 "$ROOT/config/editions/$EDITION.packages" "$CAL_ROOT/usr/share/hard-gaming-os/manifests/$EDITION.packages"
@@ -82,24 +90,24 @@ if [[ -f "$LAUNCHER" ]]; then
     printf '%s\n' 'operations:' '  - install:'
     { cat "$ROOT/build/$EDITION/packages.txt"; echo firefox; } | sort -u | sed 's/^/      - /'
   } > "$CAL_ROOT/usr/share/hard-gaming-os/packages-hgos-operations.conf"
-  for executable in hgos-calamares-runtime hgos-target-hook hgos-audit-target-packages; do
+  sed -i '/^file_permissions=(/a\  ["/usr/local/bin/hgos-install"]="0:0:755"' "$PROFILE/profiledef.sh"
+  for executable in hgos-calamares-runtime hgos-target-hook hgos-audit-target-packages hgos-install-branding hgos-calamares-libfix; do
     sed -i "/^file_permissions=(/a\  [\"/usr/local/libexec/$executable\"]=\"0:0:755\"" "$PROFILE/profiledef.sh"
   done
   cp -a "$OVERLAY/." "$CAL_ROOT/usr/share/hard-gaming-os/target-payload/$EDITION/"
   cat > "$CAL_ROOT/etc/calamares/modules/shellprocess_hgos.conf" <<EOF
 ---
 dontChroot: true
-timeout: 120
+timeout: 1800
 script:
   - '/usr/local/libexec/hgos-target-hook $EDITION "\${ROOT}"'
 EOF
   cat > "$CAL_ROOT/etc/calamares/modules/shellprocess_hgos_plymouth.conf" <<EOF
 ---
 dontChroot: true
-timeout: 120
+timeout: 600
 script:
-  - 'install -d "\${ROOT}/usr/share/plymouth/themes"'
-  - 'cp -a /usr/share/plymouth/themes/hard-gaming-os "\${ROOT}/usr/share/plymouth/themes/"'
+  - '/usr/local/libexec/hgos-install-branding "\${ROOT}"'
 EOF
   cat > "$CAL_ROOT/etc/calamares/modules/plymouthcfg_hgos.conf" <<'EOF'
 ---
@@ -110,7 +118,7 @@ EOF
 [Desktop Entry]
 Type=Application
 Name=Hard Gaming OS installieren
-Exec=/usr/local/bin/calamares-online.sh
+Exec=/usr/local/bin/hgos-install
 Icon=/usr/share/hard-gaming-os/hg-os-logo.png
 Terminal=false
 Categories=System;
@@ -160,7 +168,25 @@ fi
 for binary in pacman mkarchiso mksquashfs grub-mkrescue; do
  command -v "$binary" >/dev/null || { echo "Abhängigkeit fehlt: $binary" >&2; exit 5; }
 done
+# Branding-Paket für Live- und Zielsystem (makepkg läuft als aufrufender Benutzer).
+"$ROOT/scripts/build-branding-package.sh" "$PROFILE/airootfs/usr/share/hard-gaming-os/packages"
 # Execute CachyOS native build pipeline from isolated staged upstream checkout.
 cd "$STAGE"
+touch "$STAGE/.hgos-build-start"
+# Das CachyOS-Skript meldet auch nach fertiger ISO teils einen Fehler über seinen
+# EXIT/INT-Trap ("Aborted by user"). Entscheidend ist, ob eine neue ISO entstand.
+set +e
 ./buildiso.sh -p desktop -w
-printf 'Upstream-ISO-Ausgabe: %s/out\n' "$STAGE"
+rc=$?
+set -e
+mapfile -d '' NEW_ISOS < <(find "$STAGE/out" -type f -name '*.iso' -newer "$STAGE/.hgos-build-start" -size +1G -print0 2>/dev/null)
+if (( rc != 0 )); then
+  if [[ ${#NEW_ISOS[@]} -eq 1 ]]; then
+    echo "Hinweis: buildiso.sh endete mit Status $rc, die ISO ist aber vollständig: ${NEW_ISOS[0]}" >&2
+  else
+    echo "buildiso.sh fehlgeschlagen (Status $rc), keine vollständige ISO gefunden" >&2
+    exit "$rc"
+  fi
+fi
+[[ ${#NEW_ISOS[@]} -eq 1 ]] || { echo "Erwartet genau eine neue ISO, gefunden: ${#NEW_ISOS[@]}" >&2; exit 7; }
+printf 'Upstream-ISO-Ausgabe: %s\n' "${NEW_ISOS[0]}"

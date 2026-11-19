@@ -60,6 +60,30 @@ def netinstall_branding(config, groups, local_url):
     return config, groups
 
 
+IMAGES = "/usr/share/hard-gaming-os/installer"
+
+
+def hostname_branding(config):
+    """Computername-Vorschlag: hardgaming-<cpu> statt cachyos-<cpu>."""
+    if 'template: "hardgaming-' in config:
+        return config
+    config, count = re.subn(r'(?m)^([ \t]+template:[ \t]*)"cachyos-', r'\1"hardgaming-', config)
+    if count != 1:
+        print("HGOS Calamares: Hostname-Vorlage nicht gefunden, CachyOS-Vorschlag bleibt", file=sys.stderr)
+    return config
+
+
+def bootloader_branding(config):
+    """Bootloader-Vorschaubilder durch HG-Grafiken ersetzen (CachyOS-Logos entfernen)."""
+    def image(match):
+        name = "grub" if match[2] == "grub" else "generic"
+        return f'{match[1]}"{IMAGES}/bootloader-{name}.png"'
+    config, count = re.subn(r'(screenshot:[ \t]*)"[^"\n]*/bootloaders/([\w.-]+?)\.(?:jxl|png|webp|jpg)"', image, config)
+    if not count and IMAGES not in config:
+        print("HGOS Calamares: Bootloader-Bilder nicht gefunden", file=sys.stderr)
+    return config
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("config",type=Path)
@@ -79,6 +103,10 @@ def main():
             module_config(modules, "netinstall.yaml"), groups_file.as_uri()
         )
         groups_file.write_text(groups)
+        users = module_config(modules, "users.conf")
+        (modules / "users.conf").write_text(hostname_branding(users))
+        chooser = module_config(modules, "packagechooser_bootloader.conf")
+        (modules / "packagechooser_bootloader.conf").write_text(bootloader_branding(chooser))
         (modules / "netinstall_hgos.conf").write_text(netinstall)
         (modules / "packages_hgos.conf").write_text(base.rstrip() + "\n\n" + operations)
         a.config.write_text(updated)

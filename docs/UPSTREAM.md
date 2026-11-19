@@ -7,7 +7,7 @@ Der Build nutzt das Desktop-Profil von [CachyOS-Live-ISO](https://github.com/Cac
 In einem Projektpfad ohne Leerzeichen arbeiten. Der Upstream-Build kann das installierte `mkarchiso` ändern. Die folgenden Builds nacheinander starten.
 
 ```bash
-sudo pacman -Syu --needed archiso mkinitcpio-archiso git squashfs-tools grub python gettext
+sudo pacman -Syu --needed archiso mkinitcpio-archiso git squashfs-tools grub python gettext base-devel
 ./scripts/preflight.sh
 ./scripts/test-integration.sh
 ./scripts/build-cachyos.sh gaming
@@ -23,7 +23,9 @@ Erwartete Ausgabe sind zwei ISO-Dateien samt SHA-256 unter `dist/iso/` und Build
 
 ## Abnahme
 
-Ablauf, Bootlog-Auswertung und Screenshots: [DIAGNOSE-2.1.4.md](DIAGNOSE-2.1.4.md) mit `scripts/vm-test.sh`.
+Ablauf, Bootlog-Auswertung und Screenshots: [DIAGNOSE-2.1.4.md](DIAGNOSE-2.1.4.md) mit `scripts/vm-test.sh`. Prüfliste für 2.1.5: [TEST-2.1.5.md](TEST-2.1.5.md).
+
+Der Build startet per `sudo` von einem normalen Benutzer: `makepkg` baut das Paket `hgos-branding` als dieser Benutzer.
 
 1. Jede ISO mit UEFI und Legacy-BIOS in einer VM starten. Die virtuelle Zielplatte soll leer sein.
 2. Über „Hard Gaming OS installieren“ Calamares starten. Branding, Partitionierung und die Installation bis zum Abschluss prüfen.

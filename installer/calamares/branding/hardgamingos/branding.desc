@@ -5,10 +5,10 @@ windowExpanding: normal
 strings:
   productName: Hard Gaming OS
   shortProductName: Hard Gaming OS
-  version: 2.1.4 Beta
-  shortVersion: 2.1.4
-  versionedName: Hard Gaming OS 2.1.4 Beta
-  shortVersionedName: Hard Gaming OS 2.1.4
+  version: 2.1.5 Beta
+  shortVersion: 2.1.5
+  versionedName: Hard Gaming OS 2.1.5 Beta
+  shortVersionedName: Hard Gaming OS 2.1.5
   bootloaderEntryName: Hard Gaming OS
   welcome: Willkommen bei Hard Gaming OS
   welcomeMessage: Entwickelt von Hard Gaming Labs. Wähle deine Installationsoptionen.
@@ -20,7 +20,9 @@ images:
   sidebarBackground: slide1.jpg
   sidebarLogo: logo.png
 slideshow: show.qml
+# Calamares erwartet die Schlüssel mit großem Anfangsbuchstaben (wie im CachyOS-Branding).
 style:
-  sidebarBackground: "#101b16"
-  sidebarText: "#f1fff4"
-  sidebarTextSelect: "#54ef61"
+  SidebarBackground: "#101b16"
+  SidebarText: "#f1fff4"
+  SidebarTextCurrent: "#101b16"
+  SidebarBackgroundCurrent: "#54ef61"

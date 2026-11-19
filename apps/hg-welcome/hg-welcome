@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Öffnet Hello Hard Gaming OS in einem eigenen Browserfenster.
+PAGE=/usr/share/hard-gaming-os/welcome/index.html
+command -v firefox >/dev/null && exec firefox --new-window "file://$PAGE"
+exec xdg-open "file://$PAGE"

@@ -21,14 +21,22 @@ systemctl set-default graphical.target
   || { echo 'HGOS: display-manager.service nicht auf plasmalogin verknüpft' >&2; exit 1; }
 log "Login-Manager: plasmalogin.service, Standardziel: graphical.target"
 
-# 2) Plymouth-Theme muss vollständig vorhanden sein, bevor es in die initramfs geht.
+# 2) Branding-Paket (Plymouth, GRUB-Theme, Wallpaper, Plasma-Design, Farbschema,
+#    fastfetch) ins Live-System. Ersetzt kollidierende CachyOS-Grafikpakete.
+mapfile -t pkgs < <(find /usr/share/hard-gaming-os/packages -maxdepth 1 -name 'hgos-branding-*.pkg.tar.*' ! -name '*.sig')
+[[ ${#pkgs[@]} -eq 1 ]] || { echo "HGOS: Branding-Paket nicht eindeutig (${#pkgs[@]})" >&2; exit 1; }
+pacman -U --noconfirm --ask=4 "${pkgs[0]}"
+/usr/lib/hard-gaming-os/apply-branding
+log "Branding-Paket: ${pkgs[0]##*/}"
+
+# 3) Plymouth-Theme muss vollständig vorhanden sein, bevor es in die initramfs geht.
 theme=/usr/share/plymouth/themes/hard-gaming-os
 for file in hard-gaming-os.plymouth hard-gaming-os.script logo.png; do
   [[ -s "$theme/$file" ]] || { echo "HGOS: Plymouth-Datei fehlt: $theme/$file" >&2; exit 1; }
 done
 [[ -d /usr/lib/plymouth ]] || { echo 'HGOS: plymouth nicht installiert' >&2; exit 1; }
 
-# 3) Live-initramfs für beide Menü-Kernel neu erzeugen und Paarung protokollieren.
+# 4) Live-initramfs für beide Menü-Kernel neu erzeugen und Paarung protokollieren.
 for package in linux-cachyos linux-cachyos-lts; do
   found=0
   for marker in /usr/lib/modules/*/pkgbase; do

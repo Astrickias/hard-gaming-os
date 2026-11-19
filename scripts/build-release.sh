@@ -13,10 +13,11 @@ LOG="$ROOT/dist/logs/build-${EDITION}-$HGOS_VERSION.log"
 exec > >(tee "$LOG") 2>&1
 "$ROOT/scripts/build-cachyos.sh" "$EDITION" --execute --ref "$HGOS_UPSTREAM_REF"
 STAGE="$ROOT/build/cachyos-$EDITION"
-mapfile -d '' ISOS < <(find "$STAGE/out/desktop" -maxdepth 1 -type f -name '*.iso' -print0)
+mapfile -d '' ISOS < <(find "$STAGE/out" -type f -name '*.iso' -newer "$STAGE/.hgos-build-start" -print0)
 [[ ${#ISOS[@]} -eq 1 ]] || { echo "Erwartet genau eine ISO, gefunden: ${#ISOS[@]}" >&2; exit 7; }
 TARGET="$ROOT/dist/iso/Hard-Gaming-OS-${EDITION}-$HGOS_VERSION-x86_64.iso"
 cp -- "${ISOS[0]}" "$TARGET"
 (cd "$(dirname "$TARGET")" && sha256sum "$(basename "$TARGET")") > "$TARGET.sha256"
 cat "$TARGET.sha256"
-echo "ISO erzeugt, aber Boot und Installation sind noch NICHT validiert: $TARGET"
+echo "ISO erzeugt: $TARGET"
+echo "Nächster Schritt: VM-Test nach docs/DIAGNOSE-2.1.4.md (Live-Start, Installation, Neustart ohne ISO)."

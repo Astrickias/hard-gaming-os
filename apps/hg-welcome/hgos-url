@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Verarbeitet hgos://-Links aus Hello Hard Gaming OS.
+case "${1:-}" in
+  hgos://install*|hgos:install*)
+    exec /usr/local/bin/hgos-install ;;
+  hgos://update*|hgos:update*)
+    exec konsole --hide-menubar -p tabtitle="Hard Gaming OS aktualisieren" -e bash -c \
+      'echo "Hard Gaming OS wird aktualisiert …"; echo; sudo pacman -Syu; echo; read -rp "Fertig. Enter zum Schließen …"' ;;
+  *)
+    echo "Unbekannte Aktion: ${1:-}" >&2; exit 2 ;;
+esac

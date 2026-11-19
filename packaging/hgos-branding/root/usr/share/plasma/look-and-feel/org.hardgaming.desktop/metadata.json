@@ -1,0 +1,13 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [ { "Name": "Hard Gaming Labs" } ],
+        "Description": "Hard Gaming OS – dunkles Design mit grünen Akzenten",
+        "Id": "org.hardgaming.desktop",
+        "License": "LicenseRef-HardGaming",
+        "Name": "Hard Gaming",
+        "Version": "2.1.5",
+        "Website": "https://hardgaming.net/"
+    },
+    "X-Plasma-APIVersion": "2"
+}

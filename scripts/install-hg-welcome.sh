@@ -5,22 +5,63 @@ TARGET="${1:-}"
 if [[ -z "$TARGET" || "$TARGET" != /* || "$TARGET" == / || ! -d "$TARGET" ]]; then echo "Usage: $0 /absolute/test-or-staging-root (not /)" >&2; exit 2; fi
 install -d "$TARGET/usr/share/hard-gaming-os/welcome" "$TARGET/usr/share/applications" "$TARGET/etc/xdg/autostart"
 cp -a "$ROOT/apps/hg-welcome/." "$TARGET/usr/share/hard-gaming-os/welcome/"
-cat > "$TARGET/usr/share/applications/hg-welcome.desktop" <<'EOF'
+install -Dm755 "$ROOT/apps/hg-welcome/hg-welcome" "$TARGET/usr/local/bin/hg-welcome"
+install -Dm755 "$ROOT/apps/hg-welcome/hgos-url" "$TARGET/usr/local/bin/hgos-url"
+rm -f "$TARGET/usr/share/hard-gaming-os/welcome/hg-welcome" "$TARGET/usr/share/hard-gaming-os/welcome/hgos-url"
+cat > "$TARGET/usr/share/applications/hg-welcome.desktop" <<'DESKTOP'
 [Desktop Entry]
 Type=Application
 Name=Hello Hard Gaming OS
 Comment=Willkommen bei Hard Gaming OS
-Exec=xdg-open /usr/share/hard-gaming-os/welcome/index.html
-Icon=help-about
+Exec=/usr/local/bin/hg-welcome
+Icon=/usr/share/hard-gaming-os/hg-os-logo.png
 Terminal=false
 Categories=System;Utility;
-EOF
-cat > "$TARGET/etc/xdg/autostart/hg-welcome.desktop" <<'EOF'
+DESKTOP
+cat > "$TARGET/etc/xdg/autostart/hg-welcome.desktop" <<'DESKTOP'
 [Desktop Entry]
 Type=Application
 Name=Hello Hard Gaming OS
-Exec=sh -c 'test -e "$HOME/.config/hg-welcome/skip-autostart" || xdg-open /usr/share/hard-gaming-os/welcome/index.html'
+Exec=sh -c 'test -e "$HOME/.config/hg-welcome/skip-autostart" || exec /usr/local/bin/hg-welcome'
 OnlyShowIn=KDE;
 X-KDE-autostart-phase=2
-EOF
+DESKTOP
+# hgos://install und hgos://update aus Hello heraus.
+cat > "$TARGET/usr/share/applications/hgos-url.desktop" <<'DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Hard Gaming OS Aktionen
+Exec=/usr/local/bin/hgos-url %u
+MimeType=x-scheme-handler/hgos;
+NoDisplay=true
+Terminal=false
+DESKTOP
+cat > "$TARGET/usr/share/applications/hgos-update.desktop" <<'DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Hard Gaming OS aktualisieren
+Comment=Alle Pakete auf den neuesten Stand bringen
+Exec=/usr/local/bin/hgos-url hgos://update
+Icon=system-software-update
+Terminal=false
+Categories=System;Settings;
+DESKTOP
+# Firefox: kein Erststart-/Datenschutz-Tab vor Hello, Startseite hardgaming.net,
+# hgos://-Links ohne Rückfrage an das System weitergeben.
+install -Dm644 /dev/stdin "$TARGET/etc/firefox/policies/policies.json" <<'JSON'
+{
+  "policies": {
+    "OverrideFirstRunPage": "",
+    "OverridePostUpdatePage": "",
+    "DontCheckDefaultBrowser": true,
+    "Homepage": { "URL": "https://hardgaming.net/", "StartPage": "homepage" },
+    "Preferences": {
+      "datareporting.policy.dataSubmissionPolicyBypassNotification": { "Value": true, "Status": "default" }
+    },
+    "Handlers": {
+      "schemes": { "hgos": { "action": "useSystemDefault", "ask": false } }
+    }
+  }
+}
+JSON
 echo "Hard Gaming Welcome staged in $TARGET"

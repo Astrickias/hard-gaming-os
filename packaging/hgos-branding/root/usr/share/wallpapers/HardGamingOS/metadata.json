@@ -1,0 +1,8 @@
+{
+    "KPlugin": {
+        "Authors": [ { "Name": "Hard Gaming Labs" } ],
+        "Id": "HardGamingOS",
+        "License": "LicenseRef-HardGaming",
+        "Name": "Hard Gaming OS"
+    }
+}
