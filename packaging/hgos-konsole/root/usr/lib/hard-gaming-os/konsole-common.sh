@@ -4,6 +4,9 @@ KONSOLE_FENSTER_BREITE=1280
 KONSOLE_FENSTER_HOEHE=720
 KONSOLE_GAMESCOPE_EXTRA=""
 KONSOLE_DESKTOP_FALLBACK=1
+KONSOLE_FENSTER_GAMESCOPE=0
+KONSOLE_HYBRID_SITZUNG=0
+KONSOLE_WAECHTER_SEKUNDEN=25
 [[ -r /etc/hard-gaming-os/konsole.conf ]] && . /etc/hard-gaming-os/konsole.conf
 [[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/hard-gaming-konsole.conf" ]] && . "${XDG_CONFIG_HOME:-$HOME/.config}/hard-gaming-konsole.conf"
 
@@ -30,6 +33,23 @@ gpu_args() {
     igpu) [[ -n $other ]] && printf -- '--prefer-vk-device %s' "$other" ;;
     auto|dgpu|*) [[ -n $nv ]] && printf -- '--prefer-vk-device %s' "$nv" ;;
   esac
+}
+
+# Laptop mit NVIDIA und zusätzlicher (interner) Grafik?
+is_hybrid() {
+  local ids
+  ids="$(gpu_ids)"
+  grep -q '^10de:' <<<"$ids" && grep -qv '^10de:' <<<"$ids"
+}
+
+# PRIME-Offload: Programm auf der NVIDIA-Karte rendern lassen, Bild läuft über
+# die interne Grafik. Standardweg für Hybrid-Laptops, ohne gamescope.
+prime_env() {
+  is_hybrid || return 0
+  case "$KONSOLE_GPU" in
+    igpu) return 0 ;;
+  esac
+  export __NV_PRIME_RENDER_OFFLOAD=1 __VK_LAYER_NV_optimus=NVIDIA_only __GLX_VENDOR_LIBRARY_NAME=nvidia
 }
 
 # Sicherheitsprüfung vor dem Start. Gibt einen Grund aus und liefert 1, wenn die

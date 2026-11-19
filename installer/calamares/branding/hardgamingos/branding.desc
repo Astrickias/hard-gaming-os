@@ -5,10 +5,10 @@ windowExpanding: normal
 strings:
   productName: Hard Gaming OS
   shortProductName: Hard Gaming OS
-  version: 2.7.0 Beta
-  shortVersion: 2.7.0
-  versionedName: Hard Gaming OS 2.7.0 Beta
-  shortVersionedName: Hard Gaming OS 2.7.0
+  version: 2.7.1 Beta
+  shortVersion: 2.7.1
+  versionedName: Hard Gaming OS 2.7.1 Beta
+  shortVersionedName: Hard Gaming OS 2.7.1
   bootloaderEntryName: Hard Gaming OS
   welcome: Willkommen bei Hard Gaming OS
   welcomeMessage: Entwickelt von Hard Gaming Labs. Wähle deine Installationsoptionen.

@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Hard Gaming Konsole im Fenster starten (vom Desktop aus, zum Ausprobieren).
 # Als vollwertige Sitzung: beim Anmelden „Hard Gaming Konsole“ wählen.
+#
+# Seit 2.7.1 läuft der Fenster-Modus ohne gamescope als normales Fenster.
+# Ein verschachteltes gamescope hat auf Hybrid-Laptops (NVIDIA + Radeon 610M)
+# den ganzen Bildschirm schwarz gemacht. Mit KONSOLE_FENSTER_GAMESCOPE=1 lässt
+# sich der alte Weg auf Geräten mit nur einer Grafikkarte wieder einschalten.
 set -u
 . /usr/lib/hard-gaming-os/konsole-common.sh
 
@@ -9,17 +14,19 @@ if [[ ${1:-} == ogui://* ]] && [[ -e /run/user/$UID/opengamepadui/opengamepadui-
   echo "$1" >"/run/user/$UID/opengamepadui/opengamepadui-0"; exit 0
 fi
 
-if ! reason="$(konsole_check)"; then
-  log "Fenster-Start abgebrochen: $reason"
-  command -v notify-send >/dev/null && notify-send -i hard-gaming-konsole "Hard Gaming Konsole" "Start nicht möglich: $reason"
-  echo "Hard Gaming Konsole: $reason" >&2; exit 1
-fi
+[[ -x $KONSOLE_BIN ]] || { echo "Hard Gaming Konsole: Programm fehlt ($KONSOLE_BIN)" >&2; exit 1; }
 
 # Läuft schon ein gamescope (z. B. in der Konsolen-Sitzung): direkt starten
 if ls "/run/user/$UID"/gamescope* >/dev/null 2>&1; then exec "$KONSOLE_BIN" "$@"; fi
 
-# shellcheck disable=SC2046
-log "Fenster-Start: gamescope $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA"
-exec gamescope -w "$KONSOLE_FENSTER_BREITE" -h "$KONSOLE_FENSTER_HOEHE" \
-  -W "$KONSOLE_FENSTER_BREITE" -H "$KONSOLE_FENSTER_HOEHE" --xwayland-count 2 \
-  $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" "$@"
+if [[ $KONSOLE_FENSTER_GAMESCOPE == 1 ]] && ! is_hybrid && command -v gamescope >/dev/null; then
+  log "Fenster-Start (gamescope): $KONSOLE_GAMESCOPE_EXTRA"
+  # shellcheck disable=SC2086
+  exec gamescope -w "$KONSOLE_FENSTER_BREITE" -h "$KONSOLE_FENSTER_HOEHE" \
+    -W "$KONSOLE_FENSTER_BREITE" -H "$KONSOLE_FENSTER_HOEHE" --xwayland-count 2 \
+    $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" "$@"
+fi
+
+prime_env
+log "Fenster-Start (normales Fenster${__NV_PRIME_RENDER_OFFLOAD:+, NVIDIA-Offload})"
+exec "$KONSOLE_BIN" --windowed --resolution "${KONSOLE_FENSTER_BREITE}x${KONSOLE_FENSTER_HOEHE}" "$@" >>"$KONSOLE_LOG" 2>&1
