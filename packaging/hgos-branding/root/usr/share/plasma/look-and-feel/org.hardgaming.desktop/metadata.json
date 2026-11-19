@@ -6,7 +6,7 @@
         "Id": "org.hardgaming.desktop",
         "License": "LicenseRef-HardGaming",
         "Name": "Hard Gaming",
-        "Version": "2.7.1",
+        "Version": "2.7.2",
         "Website": "https://hardgaming.net/"
     },
     "X-Plasma-APIVersion": "2"

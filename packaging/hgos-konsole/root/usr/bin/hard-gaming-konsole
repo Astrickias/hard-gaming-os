@@ -17,14 +17,16 @@ fi
 [[ -x $KONSOLE_BIN ]] || { echo "Hard Gaming Konsole: Programm fehlt ($KONSOLE_BIN)" >&2; exit 1; }
 
 # Läuft schon ein gamescope (z. B. in der Konsolen-Sitzung): direkt starten
-if ls "/run/user/$UID"/gamescope* >/dev/null 2>&1; then exec "$KONSOLE_BIN" "$@"; fi
+if [[ ${XDG_CURRENT_DESKTOP:-} == gamescope ]]; then
+  exec "$KONSOLE_BIN" --display-driver x11 "$@" >>"$KONSOLE_LOG" 2>&1
+fi
 
 if [[ $KONSOLE_FENSTER_GAMESCOPE == 1 ]] && ! is_hybrid && command -v gamescope >/dev/null; then
   log "Fenster-Start (gamescope): $KONSOLE_GAMESCOPE_EXTRA"
   # shellcheck disable=SC2086
   exec gamescope -w "$KONSOLE_FENSTER_BREITE" -h "$KONSOLE_FENSTER_HOEHE" \
     -W "$KONSOLE_FENSTER_BREITE" -H "$KONSOLE_FENSTER_HOEHE" --xwayland-count 2 \
-    $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" "$@"
+    $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" --display-driver x11 "$@" >>"$KONSOLE_LOG" 2>&1
 fi
 
 prime_env

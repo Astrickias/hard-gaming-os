@@ -21,7 +21,13 @@ case "${1:-}" in
     exec konsole --hide-menubar -p tabtitle="Hard Gaming Konsole installieren" -e bash -c \
       'echo "Hard Gaming Konsole – optionaler Konsolenmodus für Steam, Heroic und Lutris."; echo;
        echo "Danach: abmelden und im Anmeldebildschirm die Sitzung „Hard Gaming Konsole“ wählen."; echo;
-       sudo pacman -Sy --needed hgos-konsole; echo; read -rp "Fertig. Enter zum Schließen …"' ;;
+       echo "Dabei wird das gesamte System aktualisiert."
+       sudo pacman -Syu --needed hgos-konsole
+       rc=$?
+       if (( rc == 0 )); then echo "Hard Gaming Konsole installiert."
+       else echo "Installation fehlgeschlagen (Status $rc)." >&2; fi
+       read -rp "Enter zum Schließen …"
+       exit "$rc"' ;;
   hgos://app/heroic*)
     command -v gtk-launch >/dev/null && gtk-launch heroic && exit 0
     exec heroic ;;
