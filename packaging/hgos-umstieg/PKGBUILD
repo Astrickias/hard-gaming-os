@@ -9,7 +9,7 @@ pkgdesc="Hard Gaming OS auf einem bestehenden CachyOS: Branding, Hello, Update C
 arch=(any)
 url="https://hardgaming.net/"
 license=(LicenseRef-HardGaming)
-depends=(hgos-branding hgos-update-center qt6-declarative plasma-workspace)
+depends=(hgos-keyring hgos-branding hgos-update-center qt6-declarative plasma-workspace)
 optdepends=('steam: Gaming' 'lutris: Gaming' 'heroic-games-launcher: Epic/GOG/Amazon'
             'mangohud: FPS-Anzeige' 'gamemode: Leistungsmodus' 'firefox: Browser')
 install=hgos-umstieg.install

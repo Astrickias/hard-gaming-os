@@ -1,0 +1,17 @@
+# Hard Gaming OS – Schlüsselbund für das Paket-Repo [hardgaming]
+# Gebaut von scripts/build-packages.sh (nicht direkt aus diesem Ordner).
+pkgname=hgos-keyring
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc="Hard Gaming OS: Signaturschlüssel für das Paket-Repo [hardgaming]"
+arch=(any)
+url="https://hardgaming.net/"
+license=(LicenseRef-HardGaming)
+install=hgos-keyring.install
+
+package() {
+  cp -a "$startdir/root/." "$pkgdir/"
+  install -Dm644 "$startdir/keys/hardgaming.gpg" "$pkgdir/usr/share/pacman/keyrings/hardgaming.gpg"
+  install -Dm644 "$startdir/keys/hardgaming-trusted" "$pkgdir/usr/share/pacman/keyrings/hardgaming-trusted"
+  install -Dm644 "$startdir/keys/hardgaming-revoked" "$pkgdir/usr/share/pacman/keyrings/hardgaming-revoked"
+}

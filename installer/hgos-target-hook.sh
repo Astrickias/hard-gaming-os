@@ -33,6 +33,17 @@ in_target pacman --config /var/cache/hard-gaming-os/pacman-local.conf -U --nocon
   || { echo 'HGOS: Update Center konnte nicht installiert werden (Abhängigkeiten im Zielsystem?)' >&2; exit 7; }
 log "Update Center installiert: ${UPD[0]##*/}"
 
+# 2c) Schlüsselbund und Paket-Repo [hardgaming] (sofern im Build vorhanden).
+mapfile -t KEYRING < <(find /usr/share/hard-gaming-os/packages -maxdepth 1 -name 'hgos-keyring-*.pkg.tar.*' ! -name '*.sig' 2>/dev/null)
+if [[ ${#KEYRING[@]} -eq 1 ]]; then
+  install -m644 "${KEYRING[0]}" "$TARGET/var/cache/hard-gaming-os/"
+  in_target pacman --config /var/cache/hard-gaming-os/pacman-local.conf -U --noconfirm "/var/cache/hard-gaming-os/${KEYRING[0]##*/}" \
+    || { echo 'HGOS: Schlüsselbund konnte nicht installiert werden' >&2; exit 7; }
+  log "Paket-Repo eingerichtet: ${KEYRING[0]##*/}"
+else
+  log 'WARNUNG: hgos-keyring nicht im Build, Paket-Repo [hardgaming] nicht eingerichtet'
+fi
+
 # 3) Sichtbare CachyOS-Programme entfernen (nicht Kernel, Repos, Schlüssel, Einstellungen).
 VISIBLE=(cachyos-hello cachyos-kernel-manager cachyos-packageinstaller cachyos-wallpapers cachy-update
          cachyos-kde-settings cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git)

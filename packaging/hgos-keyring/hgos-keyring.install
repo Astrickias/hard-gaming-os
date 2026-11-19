@@ -1,0 +1,14 @@
+post_install() {
+  if [[ -d /etc/pacman.d/gnupg ]]; then
+    pacman-key --populate hardgaming
+  else
+    echo "Hinweis: pacman-key ist noch nicht eingerichtet. Später ausführen: pacman-key --populate hardgaming"
+  fi
+  /usr/lib/hard-gaming-os/pacman-repo add
+}
+post_upgrade() {
+  post_install
+}
+pre_remove() {
+  /usr/lib/hard-gaming-os/pacman-repo remove
+}
