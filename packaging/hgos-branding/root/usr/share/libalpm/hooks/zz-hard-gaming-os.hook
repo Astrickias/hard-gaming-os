@@ -9,6 +9,7 @@ Target = grub-btrfs
 Target = plymouth
 Target = cachyos-hooks
 Target = cachyos-settings
+Target = systemd-boot-manager
 
 [Action]
 Description = Hard Gaming OS: Branding wiederherstellen

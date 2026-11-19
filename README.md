@@ -13,6 +13,7 @@ Website: [hardgaming.net](https://hardgaming.net/)
 | `scripts/build-packages.sh` | Baut die HG-Pakete mit `makepkg` |
 | `packaging/hgos-branding` | GRUB-Theme, Plymouth, Wallpaper, Plasma-Design, Farbschema, fastfetch |
 | `packaging/hgos-update-center` | Hard Gaming Update Center (Fork von cachy-updater) |
+| `packaging/hgos-umstieg` | Umstieg von CachyOS ohne Neuinstallation ([docs/UMSTIEG.md](docs/UMSTIEG.md)) |
 | `apps/hg-welcome` | Hello Hard Gaming OS (Qt-Quick-App) |
 | `installer/` | Calamares-Branding und Installations-Hooks |
 | `config/editions/` | Paketliste |
@@ -27,7 +28,7 @@ sudo env HGOS_UPSTREAM_REF=3215497d2e8c5fea90e185affcf973dfa2cf790b \
   HGOS_ACK_EXPERIMENTAL=1 HGOS_ACK_TARGET_UNVERIFIED=1 ./scripts/build-release.sh
 ```
 
-Testablauf und Prüfliste: [docs/TEST-2.4.0.md](docs/TEST-2.4.0.md).
+Testablauf und Prüfliste: [docs/TEST-2.5.0.md](docs/TEST-2.5.0.md).
 
 ## Versionen
 

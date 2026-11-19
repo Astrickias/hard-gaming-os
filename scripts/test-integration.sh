@@ -20,6 +20,8 @@ grep -q 'hgos://update' "$ROOT/apps/hg-welcome/index.html"
 grep -q 'basiert auf <a href="https://cachyos.org/">CachyOS</a>' "$ROOT/apps/hg-welcome/index.html"
 for f in ../hgos-update-center/PKGBUILD ../hgos-update-center/hgos-update-center.install ../hgos-update-center/brand-update-center.py \
          ../hgos-update-center/assets/logo.svg ../hgos-update-center/assets/tray-uptodate.svg ../hgos-update-center/assets/tray-updates.svg \
+         ../hgos-umstieg/PKGBUILD ../hgos-umstieg/hgos-umstieg.install \
+         root/usr/lib/hard-gaming-os/restore-branding root/usr/bin/hgos-design-anwenden root/usr/bin/hgos-design-zuruecksetzen \
          PKGBUILD hgos-branding.install root/usr/lib/hard-gaming-os/apply-branding \
          root/usr/share/grub/themes/hard-gaming-os/theme.txt root/usr/share/grub/themes/hard-gaming-os/background.png \
          root/usr/share/color-schemes/HardGaming.colors root/usr/share/wallpapers/HardGamingOS/metadata.json \
@@ -36,6 +38,7 @@ grep -q '^  SidebarText:' "$ROOT/installer/calamares/branding/hardgamingos/brand
 test -s "$ROOT/apps/hg-welcome/qml/Main.qml"
 grep -q 'hgos://install' "$ROOT/apps/hg-welcome/qml/Main.qml"
 grep -q 'hgos://update' "$ROOT/apps/hg-welcome/qml/Main.qml"
-for f in "$ROOT"/apps/hg-welcome/hg-welcome "$ROOT"/apps/hg-welcome/hgos-url "$ROOT"/packaging/hgos-branding/root/usr/lib/hard-gaming-os/apply-branding; do bash -n "$f"; done
+for f in "$ROOT"/apps/hg-welcome/hg-welcome "$ROOT"/apps/hg-welcome/hgos-url "$ROOT"/packaging/hgos-branding/root/usr/lib/hard-gaming-os/* "$ROOT"/packaging/hgos-branding/root/usr/bin/* "$ROOT"/packaging/*/*.install; do bash -n "$f"; done
+grep -q 'pre_remove' "$ROOT/packaging/hgos-branding/hgos-branding.install"
 grep -q 'https://github.com/storytold/craft-launcher/releases' "$ROOT/apps/hg-welcome/index.html"
-echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket, Update Center und Hello-App'
+echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket, Update Center, Hello-App und Umstiegspaket'

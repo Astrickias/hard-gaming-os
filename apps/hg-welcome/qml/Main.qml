@@ -17,7 +17,7 @@ ApplicationWindow {
     color: "#0b1013"
 
     readonly property bool live: Qt.application.arguments.indexOf("--live") >= 0
-    readonly property string version: "2.4.0 Beta"
+    readonly property string version: "2.5.2 Beta"
     readonly property color green: "#54ef61"
     readonly property color greenDark: "#20332b"
     readonly property color text: "#eaf0f0"
@@ -259,6 +259,9 @@ ApplicationWindow {
                             ActionCard { glyph: "⟳"; heading: "Hard Gaming Update Center"
                                 body: "Updates für System, Treiber, Programme und Flatpaks. Neue Updates meldet es unten rechts in der Taskleiste."
                                 action: "Update Center öffnen →"; url: "hgos://update" }
+                            ActionCard { glyph: "◐"; heading: "Hard-Gaming-Design"
+                                body: "Setzt Plasma-Design, grüne Akzente und HG-Wallpaper für deinen Benutzer (wieder) auf den Hard-Gaming-Standard."
+                                action: "Design übernehmen →"; url: "hgos://design" }
                             ActionCard { glyph: "⚙"; heading: "Systemeinstellungen"
                                 body: "Bildschirm, Ton, Netzwerk, Design und mehr."
                                 action: "Einstellungen öffnen →"; url: "hgos://settings" }

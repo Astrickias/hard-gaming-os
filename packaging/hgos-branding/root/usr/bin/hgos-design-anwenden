@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Hard-Gaming-Design für den angemeldeten Benutzer übernehmen (Plasma-Design, Farben, Wallpaper).
+set -euo pipefail
+[[ $(id -u) -ne 0 ]] || { echo 'Bitte als normaler Benutzer ausführen, nicht mit sudo.' >&2; exit 1; }
+plasma-apply-lookandfeel -a org.hardgaming.desktop
+plasma-apply-colorscheme HardGaming
+plasma-apply-wallpaperimage /usr/share/wallpapers/HardGamingOS/contents/images/2048x1152.jpg || true
+echo 'Hard-Gaming-Design übernommen. Rückgängig mit: hgos-design-zuruecksetzen'

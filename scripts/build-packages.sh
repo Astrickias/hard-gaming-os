@@ -15,15 +15,17 @@ if [[ $(id -u) -eq 0 ]]; then
   RUN_AS=(sudo -u "$SUDO_USER")
 fi
 
-build_pkg() { # name zusatzschritt
-  local name=$1 work="$ROOT/build/pkg/$1"
+build_pkg() { # name [zusatzschritt]
+  local name=$1 work="$ROOT/build/pkg/$1" flags=(-f --noconfirm)
+  # Reine Daten-Pakete (arch=any) brauchen ihre Laufzeitabhängigkeiten nicht auf dem Buildhost.
+  [[ $name == hgos-update-center ]] || flags+=(--nodeps)
   rm -rf -- "$work"; mkdir -p "$work"
   cp -a "$ROOT/packaging/$name/." "$work/"
   sed -i "s/@VERSION@/$VERSION/" "$work/PKGBUILD"
   [[ $# -lt 2 ]] || "$2" "$work"
   [[ ${#RUN_AS[@]} -eq 0 ]] || chown -R "$SUDO_USER": "$work"
-  # Ohne --nodeps: fehlende Build-Abhängigkeiten nennt makepkg mit Namen.
-  if ! (cd "$work" && "${RUN_AS[@]}" env PKGDEST="$work/out" makepkg -f --noconfirm); then
+  # Update Center ohne --nodeps: fehlende Build-Abhängigkeiten nennt makepkg mit Namen.
+  if ! (cd "$work" && "${RUN_AS[@]}" env PKGDEST="$work/out" makepkg "${flags[@]}"); then
     echo "Paketbau $name fehlgeschlagen. Fehlende Pakete stehen oben unter 'Missing dependencies'." >&2
     echo 'Build-Abhängigkeiten: sudo pacman -S --needed base-devel cmake ninja git kirigami qqc2-desktop-style pacman-contrib expac' >&2
     exit 4
@@ -41,5 +43,25 @@ branding_extra() { # Plymouth-Theme aus branding/full und assets ergänzen
   install -m644 "$ROOT/assets/HG OS.png" "$theme/logo.png"
 }
 
+umstieg_extra() { # Systemkennung, Logos und Hello aus dem Projekt übernehmen
+  local root="$1/root" stage="$ROOT/build/pkg/umstieg-stage"
+  "$ROOT/scripts/prepare-edition.sh" gaming >/dev/null
+  local overlay="$ROOT/build/gaming/overlay/usr/share/hard-gaming-os"
+  install -d "$root/usr/bin" "$root/usr/share/hard-gaming-os" "$root/usr/share/applications" "$root/etc/xdg/autostart"
+  for file in os-release issue release-info edition hg-os-logo.png hg-labs-logo.png hg-labs-outline.png; do
+    install -m644 "$overlay/$file" "$root/usr/share/hard-gaming-os/$file"
+  done
+  install -m644 "$ROOT/overlay/usr/share/applications/hgos-about.desktop" "$root/usr/share/applications/"
+  rm -rf -- "$stage"; mkdir -p "$stage"
+  "$ROOT/scripts/install-hg-welcome.sh" "$stage" >/dev/null
+  cp -a "$stage/usr/share/hard-gaming-os/welcome" "$root/usr/share/hard-gaming-os/"
+  install -m755 "$stage/usr/local/bin/hg-welcome" "$stage/usr/local/bin/hgos-url" "$root/usr/bin/"
+  for desktop in hg-welcome.desktop hgos-url.desktop; do
+    sed 's#/usr/local/bin/#/usr/bin/#g' "$stage/usr/share/applications/$desktop" > "$root/usr/share/applications/$desktop"
+  done
+  sed 's#/usr/local/bin/#/usr/bin/#g' "$stage/etc/xdg/autostart/hg-welcome.desktop" > "$root/etc/xdg/autostart/hg-welcome.desktop"
+}
+
 build_pkg hgos-branding branding_extra
 build_pkg hgos-update-center
+build_pkg hgos-umstieg umstieg_extra

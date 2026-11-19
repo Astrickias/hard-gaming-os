@@ -1,0 +1,22 @@
+post_install() {
+  /usr/lib/hard-gaming-os/apply-branding
+  if [[ -f /boot/grub/grub.cfg ]] && command -v grub-mkconfig >/dev/null; then
+    grub-mkconfig -o /boot/grub/grub.cfg || echo "Hinweis: grub-mkconfig fehlgeschlagen, Startmenü unverändert."
+  fi
+  cat <<'MSG'
+
+  Willkommen bei Hard Gaming OS!
+  ------------------------------
+  1. Design übernehmen (als normaler Benutzer, nicht mit sudo):
+       hgos-design-anwenden
+  2. Startbild übernehmen:  sudo mkinitcpio -P
+  3. Abmelden und neu anmelden. Hello begrüßt dich dann.
+
+  Rückweg: erst „hgos-design-zuruecksetzen“, dann
+       sudo pacman -Rns hgos-umstieg hgos-branding hgos-update-center
+
+MSG
+}
+post_upgrade() {
+  /usr/lib/hard-gaming-os/apply-branding
+}
