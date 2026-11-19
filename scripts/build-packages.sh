@@ -47,7 +47,7 @@ umstieg_extra() { # Systemkennung, Logos und Hello aus dem Projekt übernehmen
   local root="$1/root" stage="$ROOT/build/pkg/umstieg-stage"
   "$ROOT/scripts/prepare-edition.sh" gaming >/dev/null
   local overlay="$ROOT/build/gaming/overlay/usr/share/hard-gaming-os"
-  install -d "$root/usr/share/hard-gaming-os" "$root/usr/share/applications" "$root/etc/xdg/autostart"
+  install -d "$root/usr/bin" "$root/usr/share/hard-gaming-os" "$root/usr/share/applications" "$root/etc/xdg/autostart"
   for file in os-release issue release-info edition hg-os-logo.png hg-labs-logo.png hg-labs-outline.png; do
     install -m644 "$overlay/$file" "$root/usr/share/hard-gaming-os/$file"
   done

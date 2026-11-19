@@ -92,3 +92,16 @@ Hello ist eine Qt-Quick-App (`apps/hg-welcome/qml/Main.qml`), gestartet über da
 ## 2.5.0: Umstiegspaket
 
 Test in einer frischen CachyOS-KDE-VM nach [UMSTIEG.md](UMSTIEG.md): Installation der drei Pakete, `hgos-design-anwenden`, Neustart (GRUB, Startbild, Desktop, Hello, Update Center), danach Rückweg und Prüfung, dass `/etc/os-release` wieder CachyOS zeigt. Im ISO zusätzlich: Hello → System → „Hard-Gaming-Design“.
+
+## Ergebnis 2.5.0 Umstieg (19.11.2026, Dominiks CachyOS-PC)
+
+Versehentlich direkt auf dem Haupt-PC statt in einer VM ausgeführt.
+
+| Schritt | Ergebnis |
+|---|---|
+| `hgos-branding`, `hgos-update-center` installiert | ✅ |
+| Sicherung unter `/var/lib/hard-gaming-os/backup/etc` (os-release, lsb-release, issue, default, plymouth) | ✅ |
+| Plymouth-Theme `hard-gaming-os` aktiv | ✅ |
+| `hgos-design-anwenden`: Farbschema, Wallpaper | ✅ mit Warnung „Path traversal attempt detected“ (Symlink `contents/layouts`) → 2.5.1 |
+| `hgos-umstieg` gebaut | ❌ `usr/bin` im Paketordner fehlte → 2.5.1 |
+| Bootloader | weder `/boot/grub/grub.cfg` noch `/boot/limine.conf` noch `/boot/loader/entries` gefunden; GRUB unverändert |
