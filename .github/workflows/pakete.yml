@@ -27,7 +27,9 @@ jobs:
         run: |
           pacman -Syu --noconfirm --needed base-devel git sudo python cmake ninja \
             qt6-base qt6-declarative kirigami qqc2-desktop-style breeze-icons polkit \
-            pacman-contrib expac plymouth
+            pacman-contrib expac plymouth \
+            godot rust clang wget unzip ffmpeg python-pillow \
+            libx11 libxres libxcb libxext libxau libxdmcp
           useradd -m builder
 
       - uses: actions/checkout@v4
@@ -43,6 +45,20 @@ jobs:
         run: |
           chown -R builder: "$GITHUB_WORKSPACE"
           sudo -u builder ./scripts/build-packages.sh "$GITHUB_WORKSPACE/repo/x86_64"
+
+      # Eigener Schritt: Schlägt der (lange) Konsolen-Bau fehl, werden die übrigen
+      # Pakete trotzdem veröffentlicht – die Konsole fehlt dann nur in diesem Stand.
+      - name: Hard Gaming Konsole bauen (Fork von OpenGamepadUI)
+        id: konsole
+        continue-on-error: true
+        timeout-minutes: 90
+        run: |
+          sudo -u builder env HOME=/home/builder HGOS_BUILD_KONSOLE=1 HGOS_NUR_PAKET=hgos-konsole \
+            ./scripts/build-packages.sh "$GITHUB_WORKSPACE/repo/x86_64"
+
+      - name: Hinweis Konsole
+        if: steps.konsole.outcome == 'failure'
+        run: echo "::warning::hgos-konsole konnte nicht gebaut werden – Log im Schritt oben. Übrige Pakete werden veröffentlicht."
 
       - name: Signieren und Repo-Datenbank erzeugen
         env:

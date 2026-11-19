@@ -1,0 +1,54 @@
+# Testbau der Hard Gaming Konsole (hgos-konsole) für Pull Requests.
+# Veröffentlicht nichts: das Paket landet nur als Download-Artefakt am Workflow-Lauf
+# (zum Ausprobieren in einer VM vor dem Release).
+name: Konsole Testbau
+
+on:
+  pull_request:
+    paths:
+      - "packaging/hgos-konsole/**"
+      - "scripts/build-packages.sh"
+      - ".github/workflows/konsole-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  konsole:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    timeout-minutes: 100
+    steps:
+      - name: Werkzeuge installieren
+        run: |
+          pacman -Syu --noconfirm --needed base-devel git sudo python python-pillow \
+            godot rust clang wget unzip ffmpeg \
+            libx11 libxres libxcb libxext libxau libxdmcp
+          useradd -m builder
+
+      - uses: actions/checkout@v4
+
+      - name: hgos-konsole bauen
+        run: |
+          chown -R builder: "$GITHUB_WORKSPACE"
+          sudo -u builder env HOME=/home/builder HGOS_BUILD_KONSOLE=1 HGOS_NUR_PAKET=hgos-konsole \
+            ./scripts/build-packages.sh "$GITHUB_WORKSPACE/out"
+
+      - name: Paketinhalt prüfen
+        run: |
+          pkg="$(ls out/hgos-konsole-*.pkg.tar.zst)"
+          bsdtar -tf "$pkg" > inhalt.txt
+          for f in usr/bin/hard-gaming-konsole usr/lib/hard-gaming-os/konsole-session \
+                   usr/share/wayland-sessions/hard-gaming-konsole.desktop \
+                   usr/share/opengamepadui/opengamepad-ui.x86_64 usr/share/opengamepadui/opengamepad-ui.pck; do
+            grep -qx "$f" inhalt.txt || { echo "::error::$f fehlt im Paket"; exit 1; }
+          done
+          ! grep -q 'usr/share/applications/opengamepadui.desktop' inhalt.txt
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hgos-konsole-testpaket
+          path: out/*.pkg.tar.zst
+          retention-days: 14

@@ -15,6 +15,13 @@ case "${1:-}" in
     fi ;;
   hgos://settings*|hgos:settings*)
     exec systemsettings ;;
+  hgos://konsole*|hgos:konsole*)
+    # Optional: Hard Gaming Konsole (Konsolenmodus). Installiert → im Fenster starten.
+    command -v hard-gaming-konsole >/dev/null && exec hard-gaming-konsole
+    exec konsole --hide-menubar -p tabtitle="Hard Gaming Konsole installieren" -e bash -c \
+      'echo "Hard Gaming Konsole – optionaler Konsolenmodus für Steam, Heroic und Lutris."; echo;
+       echo "Danach: abmelden und im Anmeldebildschirm die Sitzung „Hard Gaming Konsole“ wählen."; echo;
+       sudo pacman -Sy --needed hgos-konsole; echo; read -rp "Fertig. Enter zum Schließen …"' ;;
   hgos://app/heroic*)
     command -v gtk-launch >/dev/null && gtk-launch heroic && exit 0
     exec heroic ;;

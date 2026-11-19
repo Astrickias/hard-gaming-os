@@ -13,6 +13,7 @@ Website: [hardgaming.net](https://hardgaming.net/)
 | `scripts/build-packages.sh` | Baut die HG-Pakete mit `makepkg` |
 | `packaging/hgos-branding` | GRUB-Theme, Plymouth, Wallpaper, Plasma-Design, Farbschema, fastfetch |
 | `packaging/hgos-update-center` | Hard Gaming Update Center (Fork von cachy-updater) |
+| `packaging/hgos-konsole` | Hard Gaming Konsole, optionaler Konsolenmodus (Fork von OpenGamepadUI, [docs/KONSOLE.md](docs/KONSOLE.md)) |
 | `packaging/hgos-keyring` | Signaturschlüssel und Eintrag des Paket-Repos `[hardgaming]` ([docs/PAKET-REPO.md](docs/PAKET-REPO.md)) |
 | `.github/workflows/pakete.yml` | Baut, signiert und veröffentlicht die Pakete bei jedem Versions-Tag |
 | `packaging/hgos-umstieg` | Umstieg von CachyOS ohne Neuinstallation ([docs/UMSTIEG.md](docs/UMSTIEG.md)) |

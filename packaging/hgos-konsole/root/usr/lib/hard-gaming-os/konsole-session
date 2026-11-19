@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Sitzung „Hard Gaming Konsole“ (Auswahl im Anmeldebildschirm).
+# Sicherheitsnetz: Geht der Start schief oder bricht die Konsole in den ersten
+# Sekunden ab, startet automatisch der normale KDE-Desktop – kein schwarzer Bildschirm.
+set -u
+. /usr/lib/hard-gaming-os/konsole-common.sh
+
+desktop() {
+  log "Wechsel zum Desktop: $1"
+  [[ $KONSOLE_DESKTOP_FALLBACK == 1 ]] || exit 1
+  exec /usr/lib/plasma-dbus-run-session-if-needed /usr/bin/startplasma-wayland
+}
+
+log "Sitzung startet ($(gpu_ids | tr '\n' ' '))"
+if ! reason="$(konsole_check)"; then desktop "$reason"; fi
+
+export XDG_CURRENT_DESKTOP=gamescope
+export XDG_SESSION_DESKTOP=hard-gaming-konsole
+start=$SECONDS
+# shellcheck disable=SC2046
+gamescope -e -f --xwayland-count 2 $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" >>"$KONSOLE_LOG" 2>&1
+rc=$?
+log "Konsole beendet (Code $rc nach $((SECONDS - start)) s)"
+if (( rc != 0 && SECONDS - start < 20 )); then
+  export XDG_CURRENT_DESKTOP=KDE XDG_SESSION_DESKTOP=KDE
+  desktop "Konsole ist beim Start abgebrochen (Code $rc)"
+fi
+exit 0

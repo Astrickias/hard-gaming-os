@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Hard Gaming Konsole
+Comment=Spiele aus Steam, Heroic und Lutris im Konsolenmodus – mit Controller bedienbar
+Exec=/usr/lib/hard-gaming-os/konsole-session
+Type=Application
+DesktopNames=gamescope

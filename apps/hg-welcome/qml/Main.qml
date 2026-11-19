@@ -17,7 +17,7 @@ ApplicationWindow {
     color: "#0b1013"
 
     readonly property bool live: Qt.application.arguments.indexOf("--live") >= 0
-    readonly property string version: "2.6.0 Beta"
+    readonly property string version: "2.7.0 Beta"
     readonly property color green: "#54ef61"
     readonly property color greenDark: "#20332b"
     readonly property color text: "#eaf0f0"
@@ -281,6 +281,8 @@ ApplicationWindow {
                                 action: "Heroic öffnen →"; url: "hgos://app/heroic" }
                             ActionCard { glyph: "◇"; heading: "Lutris"; body: "Alle weiteren Spiele, Emulatoren und Installer an einem Ort."
                                 action: "Lutris öffnen →"; url: "hgos://app/lutris" }
+                            ActionCard { glyph: "◉"; heading: "Hard Gaming Konsole"; body: "Optionaler Konsolenmodus: alle Spiele aus Steam, Heroic und Lutris an einem Ort, mit Controller bedienbar. Danach beim Anmelden als Sitzung wählbar."
+                                action: "Konsole installieren / starten →"; url: "hgos://konsole" }
                             ActionCard { glyph: "▤"; heading: "MangoHud & GameMode"; body: "FPS-Anzeige und mehr Leistung im Spiel. In Steam unter Startoptionen: mangohud gamemoderun %command%"
                                 action: "" }
                         }

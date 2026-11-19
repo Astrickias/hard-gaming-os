@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Hard Gaming Konsole im Fenster starten (vom Desktop aus, zum Ausprobieren).
+# Als vollwertige Sitzung: beim Anmelden „Hard Gaming Konsole“ wählen.
+set -u
+. /usr/lib/hard-gaming-os/konsole-common.sh
+
+# ogui://-Links an eine laufende Konsole weiterreichen
+if [[ ${1:-} == ogui://* ]] && [[ -e /run/user/$UID/opengamepadui/opengamepadui-0 ]]; then
+  echo "$1" >"/run/user/$UID/opengamepadui/opengamepadui-0"; exit 0
+fi
+
+if ! reason="$(konsole_check)"; then
+  log "Fenster-Start abgebrochen: $reason"
+  command -v notify-send >/dev/null && notify-send -i hard-gaming-konsole "Hard Gaming Konsole" "Start nicht möglich: $reason"
+  echo "Hard Gaming Konsole: $reason" >&2; exit 1
+fi
+
+# Läuft schon ein gamescope (z. B. in der Konsolen-Sitzung): direkt starten
+if ls "/run/user/$UID"/gamescope* >/dev/null 2>&1; then exec "$KONSOLE_BIN" "$@"; fi
+
+# shellcheck disable=SC2046
+log "Fenster-Start: gamescope $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA"
+exec gamescope -w "$KONSOLE_FENSTER_BREITE" -h "$KONSOLE_FENSTER_HOEHE" \
+  -W "$KONSOLE_FENSTER_BREITE" -H "$KONSOLE_FENSTER_HOEHE" --xwayland-count 2 \
+  $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" "$@"
