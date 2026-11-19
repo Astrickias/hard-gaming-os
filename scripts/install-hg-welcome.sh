@@ -22,7 +22,7 @@ cat > "$TARGET/etc/xdg/autostart/hg-welcome.desktop" <<'DESKTOP'
 [Desktop Entry]
 Type=Application
 Name=Hello Hard Gaming OS
-Exec=sh -c 'test -e "$HOME/.config/hg-welcome/skip-autostart" || exec /usr/local/bin/hg-welcome'
+Exec=sh -c 'grep -qs "^showOnStartup=false" "$HOME/.config/hg-welcome.conf" || exec /usr/local/bin/hg-welcome'
 OnlyShowIn=KDE;
 X-KDE-autostart-phase=2
 DESKTOP

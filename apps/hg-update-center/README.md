@@ -1,6 +1,6 @@
 # Hard Gaming Update Center
 
-Seit 2.3.0 ein eigenes Paket: `packaging/hgos-update-center`.
+Seit 2.4.0 ein eigenes Paket: `packaging/hgos-update-center`.
 
 - Basis: [cachy-updater](https://github.com/akanbaz/cachy-updater) von akanbaz, Commit `3011d681a65f2bb8d3193f39c384bdf75094db2b`, Lizenz GPL-3.0-or-later (bleibt erhalten, Lizenztext liegt im Paket unter `/usr/share/licenses/hgos-update-center/`).
 - `brand-update-center.py` setzt Name, HG-Farben, HG-Logo und Tray-Symbole und übersetzt die wichtigsten Texte ins Deutsche. Passt eine Upstream-Stelle nicht mehr, bricht der Paketbau ab.

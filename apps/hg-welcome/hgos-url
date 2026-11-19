@@ -7,6 +7,14 @@ case "${1:-}" in
     command -v hgos-update-center >/dev/null && exec hgos-update-center
     exec konsole --hide-menubar -p tabtitle="Hard Gaming OS aktualisieren" -e bash -c \
       'echo "Hard Gaming OS wird aktualisiert …"; echo; sudo pacman -Syu; echo; read -rp "Fertig. Enter zum Schließen …"' ;;
+  hgos://settings*|hgos:settings*)
+    exec systemsettings ;;
+  hgos://app/heroic*)
+    command -v gtk-launch >/dev/null && gtk-launch heroic && exit 0
+    exec heroic ;;
+  hgos://app/lutris*)
+    command -v gtk-launch >/dev/null && gtk-launch net.lutris.Lutris && exit 0
+    exec lutris ;;
   *)
     echo "Unbekannte Aktion: ${1:-}" >&2; exit 2 ;;
 esac

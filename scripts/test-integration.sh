@@ -33,6 +33,9 @@ grep -q '_commit=3011d681a65f2bb8d3193f39c384bdf75094db2b' "$ROOT/packaging/hgos
 python3 -I -m py_compile "$ROOT/packaging/hgos-update-center/brand-update-center.py"
 grep -qx pacman-contrib "$ROOT/config/editions/gaming.packages"
 grep -q '^  SidebarText:' "$ROOT/installer/calamares/branding/hardgamingos/branding.desc"
+test -s "$ROOT/apps/hg-welcome/qml/Main.qml"
+grep -q 'hgos://install' "$ROOT/apps/hg-welcome/qml/Main.qml"
+grep -q 'hgos://update' "$ROOT/apps/hg-welcome/qml/Main.qml"
 for f in "$ROOT"/apps/hg-welcome/hg-welcome "$ROOT"/apps/hg-welcome/hgos-url "$ROOT"/packaging/hgos-branding/root/usr/lib/hard-gaming-os/apply-branding; do bash -n "$f"; done
 grep -q 'https://github.com/storytold/craft-launcher/releases' "$ROOT/apps/hg-welcome/index.html"
-echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket und Update Center'
+echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket, Update Center und Hello-App'

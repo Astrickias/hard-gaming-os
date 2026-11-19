@@ -20,7 +20,7 @@ Erwartete Ausgabe ist eine ISO-Datei samt SHA-256 unter `dist/iso/` und Buildpro
 
 ## Abnahme
 
-Ablauf, Bootlog-Auswertung und Screenshots: [DIAGNOSE-2.1.4.md](DIAGNOSE-2.1.4.md) mit `scripts/vm-test.sh`. Prüfliste für 2.3.0: [TEST-2.3.0.md](TEST-2.3.0.md).
+Ablauf, Bootlog-Auswertung und Screenshots: [DIAGNOSE-2.1.4.md](DIAGNOSE-2.1.4.md) mit `scripts/vm-test.sh`. Prüfliste für 2.4.0: [TEST-2.4.0.md](TEST-2.4.0.md).
 
 Der Build startet per `sudo` von einem normalen Benutzer: `makepkg` baut die Pakete `hgos-branding` und `hgos-update-center` als dieser Benutzer. Für das Update Center lädt `makepkg` den Quellcode von GitHub.
 

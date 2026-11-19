@@ -1,4 +1,4 @@
-# Testberichte 2.1.4 / 2.1.6 und Prüfliste 2.3.0
+# Testberichte 2.1.4 / 2.1.6 und Prüfliste 2.4.0
 
 ## Ergebnis 2.1.4 Gaming (19.11.2026, virt-manager, QEMU/KVM, UEFI)
 
@@ -35,11 +35,11 @@ Getestet von Dominik, Screenshots sind echte VM-Screenshots.
 
 Bewusst unverändert: Kernel `linux-cachyos`, Repos, Mirrorlisten, Schlüssel, `pacman.conf`, `cachyos-settings`, `cachyos-hooks`, `cachyos-ananicy-rules`, `cachyos-snapper-support`, fish/zsh-Grundkonfiguration, `ID_LIKE="cachyos arch"` in os-release.
 
-## Prüfliste 2.3.0 (eine Edition, mit Update Center)
+## Prüfliste 2.4.0 (eine Edition, Update Center, Hello-App)
 
-1. Build: `sudo env HGOS_UPSTREAM_REF=3215497d2e8c5fea90e185affcf973dfa2cf790b HGOS_ACK_EXPERIMENTAL=1 HGOS_ACK_TARGET_UNVERIFIED=1 ./scripts/build-release.sh`. Erwartet: `dist/iso/Hard-Gaming-OS-2.3.0-beta-x86_64.iso` und `.sha256`.
-2. Live: Bootmenü, Plymouth-Logo, KDE mit HG-Wallpaper und grünem Farbschema, Hello im eigenen Fenster ohne Datenschutz-Tab.
-3. Hello → „Installer starten“. Calamares öffnet sich ohne Handarbeit. Seitenleiste lesbar, Hostname `hardgaming-…`, Bootloader-Bild HG.
+1. Build: `sudo env HGOS_UPSTREAM_REF=3215497d2e8c5fea90e185affcf973dfa2cf790b HGOS_ACK_EXPERIMENTAL=1 HGOS_ACK_TARGET_UNVERIFIED=1 ./scripts/build-release.sh`. Erwartet: `dist/iso/Hard-Gaming-OS-2.4.0-beta-x86_64.iso` und `.sha256`.
+2. Live: Bootmenü, Plymouth-Logo, KDE mit HG-Wallpaper und grünem Farbschema. Hello öffnet sich als eigene App (kein Browserfenster), oben rechts steht „Live-System“, alle sechs Bereiche in der Seitenleiste lassen sich anklicken.
+3. Hello → Startseite „Hard Gaming OS installieren“ oder System → „Installer starten“. Calamares öffnet sich ohne Handarbeit. Seitenleiste lesbar, Hostname `hardgaming-…`, Bootloader-Bild HG.
 4. Installation mit GRUB, „Festplatte löschen“. In der Paketauswahl ist „Office & Alltag“ angehakt.
 5. Neustart ohne ISO: HG-GRUB-Theme, HG-Plymouth, Login, Desktop mit HG-Wallpaper, Hello.
 6. Konsole im installierten System:
@@ -80,3 +80,11 @@ Offen aus dem Test: fastfetch-Logo türkis statt HG-Grün (in 2.2.0 auf RGB 84,2
 ## 2.2.0: eine Edition
 
 Gaming und Allround sind zusammengelegt. Fest installiert: Steam, Lutris, Heroic, MangoHud, GameMode, Kate, Ark, Firefox. LibreOffice (deutsch) ist im Installer als Gruppe „Office & Alltag“ wählbar und standardmäßig angehakt. Intern heißt die Edition weiterhin `gaming`, sichtbar überall nur „Hard Gaming OS“.
+
+## Ergebnis 2.3.0 (19.11.2026)
+
+Gebaut und in der VM installiert von Dominik. Rückmeldung: läuft. Update Center im Einsatz; Details (Screenshots, Paketliste) folgen.
+
+## 2.4.0: Hello als eigene App
+
+Hello ist eine Qt-Quick-App (`apps/hg-welcome/qml/Main.qml`), gestartet über das `qml`-Werkzeug aus qt6-declarative, ohne Kompilieren. Aktionen laufen über `hgos://`-Links (`hgos-url`): install, update, settings, app/heroic, app/lutris; Steam über `steam://`. „Beim Start anzeigen“ speichert in `~/.config/hg-welcome.conf`. Ohne QML-Laufzeit startet die bisherige HTML-Version im Browser.

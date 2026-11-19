@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# Öffnet Hello Hard Gaming OS in einem eigenen Browserfenster.
-PAGE=/usr/share/hard-gaming-os/welcome/index.html
-command -v firefox >/dev/null && exec firefox --new-window "file://$PAGE"
-exec xdg-open "file://$PAGE"
+# Startet Hello Hard Gaming OS als eigene App (Qt Quick). Ohne Qt-QML-Laufzeit
+# fällt es auf die HTML-Version im Browser zurück.
+DIR=/usr/share/hard-gaming-os/welcome
+ARGS=()
+[[ -x /usr/local/bin/calamares-online.sh ]] && ARGS+=(--live)
+for runtime in /usr/lib/qt6/bin/qml /usr/bin/qml6; do
+  [[ -x "$runtime" ]] && exec "$runtime" "$DIR/qml/Main.qml" -- "${ARGS[@]}"
+done
+command -v firefox >/dev/null && exec firefox --new-window "file://$DIR/index.html"
+exec xdg-open "file://$DIR/index.html"

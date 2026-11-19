@@ -64,7 +64,7 @@ def netinstall_branding(config, groups, local_url):
 
 IMAGES = "/usr/share/hard-gaming-os/installer"
 
-# Wählbare Gruppe im Installer (seit 2.3.0 eine Edition für Gaming und Alltag).
+# Wählbare Gruppe im Installer (seit 2.4.0 eine Edition für Gaming und Alltag).
 OFFICE_GROUP = """- name: "Office & Alltag"
   description: "LibreOffice für Dokumente, Tabellen und Präsentationen (deutsch)"
   hidden: false
