@@ -109,3 +109,7 @@ Versehentlich direkt auf dem Haupt-PC statt in einer VM ausgeführt.
 ## 2.5.2: systemd-boot (Dominiks PC)
 
 Bootloader: systemd-boot 262.2, Einträge von CachyOS `sdboot-manage`, `/boot` ist die EFI-Partition. 2.5.2 setzt `ENTRY_TITLE="Hard Gaming OS"` in `/etc/sdboot-manage.conf` (vorher gesichert) und benennt bestehende `title`-Zeilen unter `/boot/loader/entries` um. Prüfung: `sudo grep -h ^title /boot/loader/entries/*.conf` und Neustart.
+
+## Ergebnis 2.5.2 (Dominiks PC)
+
+`ENTRY_TITLE="Hard Gaming OS"` gesetzt ✅. Die vorhandenen Einträge hießen `Linux CachyOS` und `Linux CachyOS Lts` und wurden vom Muster in 2.5.2 nicht erfasst ❌ → 2.5.3 benennt wortweise um (`Hard Gaming OS`, `Hard Gaming OS (LTS)`) und hinterlegt den Originaltitel als Kommentar `# hgos-original-title:` im Eintrag. sdboot-manage überschreibt vorhandene Einträge nicht, die Umbenennung bleibt bei Kernel-Updates erhalten.
