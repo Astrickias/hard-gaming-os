@@ -105,3 +105,7 @@ Versehentlich direkt auf dem Haupt-PC statt in einer VM ausgeführt.
 | `hgos-design-anwenden`: Farbschema, Wallpaper | ✅ mit Warnung „Path traversal attempt detected“ (Symlink `contents/layouts`) → 2.5.1 |
 | `hgos-umstieg` gebaut | ❌ `usr/bin` im Paketordner fehlte → 2.5.1 |
 | Bootloader | weder `/boot/grub/grub.cfg` noch `/boot/limine.conf` noch `/boot/loader/entries` gefunden; GRUB unverändert |
+
+## 2.5.2: systemd-boot (Dominiks PC)
+
+Bootloader: systemd-boot 262.2, Einträge von CachyOS `sdboot-manage`, `/boot` ist die EFI-Partition. 2.5.2 setzt `ENTRY_TITLE="Hard Gaming OS"` in `/etc/sdboot-manage.conf` (vorher gesichert) und benennt bestehende `title`-Zeilen unter `/boot/loader/entries` um. Prüfung: `sudo grep -h ^title /boot/loader/entries/*.conf` und Neustart.

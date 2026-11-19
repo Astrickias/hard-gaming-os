@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
 # Hard Gaming OS – sichtbares Branding (erneut) anwenden.
 # Läuft nach Installation von hgos-branding und per pacman-Hook nach Updates von
-# filesystem, lsb-release, grub und plymouth. Baut weder GRUB noch initramfs neu.
+# filesystem, lsb-release, grub, plymouth und systemd-boot-manager. Baut weder GRUB noch initramfs neu.
 set -euo pipefail
 share=/usr/share/hard-gaming-os
 
-# Beim ersten Lauf die Originaldateien sichern (für restore-branding beim Entfernen).
+# Originaldateien einmalig sichern (für restore-branding beim Entfernen). Jede Datei
+# wird nur beim ersten Mal gesichert; später hinzugekommene Dateien werden nachgesichert.
 backup=/var/lib/hard-gaming-os/backup
-if [[ ! -e $backup/.complete ]]; then
-  install -d -m700 "$backup"
-  for file in /etc/os-release /etc/lsb-release /etc/issue /etc/default/grub \
-              /etc/default/grub-btrfs/config /etc/plymouth/plymouthd.conf; do
-    if [[ -e $file || -L $file ]]; then
-      install -d "$backup$(dirname "$file")"
-      cp -a "$file" "$backup$file"
-    else
-      echo "$file" >> "$backup/.missing"
-    fi
-  done
-  touch "$backup/.complete"
-fi
+install -d -m700 "$backup"
+touch "$backup/.missing"
+for file in /etc/os-release /etc/lsb-release /etc/issue /etc/default/grub \
+            /etc/default/grub-btrfs/config /etc/plymouth/plymouthd.conf /etc/sdboot-manage.conf; do
+  [[ -e $backup$file || -L $backup$file ]] && continue
+  grep -qxF "$file" "$backup/.missing" && continue
+  if [[ -e $file || -L $file ]]; then
+    install -d "$backup$(dirname "$file")"
+    cp -a "$file" "$backup$file"
+  else
+    echo "$file" >> "$backup/.missing"
+  fi
+done
+touch "$backup/.complete"
 
 if [[ -s $share/os-release ]]; then
   install -m644 "$share/os-release" /etc/os-release.hgos-new
@@ -49,6 +51,22 @@ if [[ -f /etc/default/grub-btrfs/config ]]; then
   grep -q '^GRUB_BTRFS_SUBMENUNAME=' /etc/default/grub-btrfs/config \
     || echo 'GRUB_BTRFS_SUBMENUNAME="Hard Gaming OS Snapshots"' >> /etc/default/grub-btrfs/config
 fi
+
+# systemd-boot über CachyOS sdboot-manage: Titel der Starteinträge.
+if [[ -f /etc/sdboot-manage.conf ]]; then
+  if grep -qE '^#?[[:space:]]*ENTRY_TITLE=' /etc/sdboot-manage.conf; then
+    sed -i -E 's|^#?[[:space:]]*ENTRY_TITLE=.*|ENTRY_TITLE="Hard Gaming OS"|' /etc/sdboot-manage.conf
+  else
+    echo 'ENTRY_TITLE="Hard Gaming OS"' >> /etc/sdboot-manage.conf
+  fi
+fi
+for entries in /boot/loader/entries /efi/loader/entries /boot/efi/loader/entries; do
+  [[ -d $entries ]] || continue
+  for entry in "$entries"/*.conf; do
+    [[ -f $entry ]] || continue
+    sed -i -E 's/^(title[[:space:]]+)CachyOS( Linux)?/\1Hard Gaming OS/' "$entry"
+  done
+done
 
 if command -v plymouth-set-default-theme >/dev/null && [[ -d /usr/share/plymouth/themes/hard-gaming-os ]]; then
   plymouth-set-default-theme hard-gaming-os

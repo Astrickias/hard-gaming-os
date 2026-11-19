@@ -12,5 +12,12 @@ done < <(find "$backup" -mindepth 2 \( -type f -o -type l \) -print0)
 if [[ -f $backup/.missing ]]; then
   while IFS= read -r file; do [[ -n $file ]] && rm -f -- "$file"; done < "$backup/.missing"
 fi
+for entries in /boot/loader/entries /efi/loader/entries /boot/efi/loader/entries; do
+  [[ -d $entries ]] || continue
+  for entry in "$entries"/*.conf; do
+    [[ -f $entry ]] || continue
+    sed -i -E 's/^(title[[:space:]]+)Hard Gaming OS/\1CachyOS/' "$entry"
+  done
+done
 rm -rf -- "$backup"
 echo 'Hard Gaming OS: Originaldateien wiederhergestellt (os-release, lsb-release, issue, GRUB, Plymouth).'
