@@ -23,6 +23,8 @@ Erwartete Ausgabe sind zwei ISO-Dateien samt SHA-256 unter `dist/iso/` und Build
 
 ## Abnahme
 
+Ablauf, Bootlog-Auswertung und Screenshots: [DIAGNOSE-2.1.4.md](DIAGNOSE-2.1.4.md) mit `scripts/vm-test.sh`.
+
 1. Jede ISO mit UEFI und Legacy-BIOS in einer VM starten. Die virtuelle Zielplatte soll leer sein.
 2. Über „Hard Gaming OS installieren“ Calamares starten. Branding, Partitionierung und die Installation bis zum Abschluss prüfen.
 3. Die ISO auswerfen und von der virtuellen Platte starten. Anmeldung und Hello Hard Gaming OS samt Website-Link prüfen. Editionskennung unter `/usr/share/hard-gaming-os/edition` und Editionspakete mit `pacman -Q` prüfen.

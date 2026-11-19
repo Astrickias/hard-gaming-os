@@ -120,8 +120,32 @@ else
   echo 'Calamares Online-Launcher fehlt; Buildfreigabe gesperrt.' >&2
   touch "$STAGE/HGOS-CALAMARES-UNVERIFIED"
 fi
-# Regenerate live-specific initramfs images for both boot menu kernels.
-install -Dm755 "$ROOT/scripts/customize-airootfs.sh" "$PROFILE/airootfs/root/customize_airootfs.sh"
+# Statische Login-Manager-Verknüpfung wie im früheren VM-Build. Sie greift auch,
+# falls das verwendete archiso customize_airootfs.sh nicht mehr ausführt.
+DM_LINK="$PROFILE/airootfs/etc/systemd/system/display-manager.service"
+if [[ -e "$DM_LINK" || -L "$DM_LINK" ]]; then
+  echo "Upstream-display-manager.service: $(readlink "$DM_LINK" || echo Datei) -> plasmalogin.service"
+  rm -f -- "$DM_LINK"
+fi
+install -d "$(dirname "$DM_LINK")"
+ln -s /usr/lib/systemd/system/plasmalogin.service "$DM_LINK"
+ln -sfn /usr/lib/systemd/system/graphical.target "$PROFILE/airootfs/etc/systemd/system/default.target"
+# Live-Anpassung (Login-Manager, Plymouth-Prüfung, initramfs beider Kernel).
+# 2.1.3 überschrieb hier eine eventuell vorhandene Upstream-customize_airootfs.sh
+# still. Jetzt wird die HG-Datei separat abgelegt und nur angehängt.
+install -Dm755 "$ROOT/scripts/customize-airootfs.sh" "$PROFILE/airootfs/root/hgos-customize-airootfs.sh"
+sed -i '/^file_permissions=(/a\  ["/root/hgos-customize-airootfs.sh"]="0:0:755"' "$PROFILE/profiledef.sh"
+CUSTOMIZE="$PROFILE/airootfs/root/customize_airootfs.sh"
+if [[ -e "$CUSTOMIZE" ]]; then
+  ! grep -qE '^[[:space:]]*exit([[:space:]]|$)' "$CUSTOMIZE" || { echo 'Upstream-customize_airootfs.sh endet mit exit: HG-Schritt manuell einbinden' >&2; exit 4; }
+  echo 'Upstream-customize_airootfs.sh gefunden: HG-Schritt wird angehängt.'
+  printf '\n# Hard Gaming OS\n/root/hgos-customize-airootfs.sh\n' >> "$CUSTOMIZE"
+else
+  printf '#!/usr/bin/env bash\nset -euo pipefail\n/root/hgos-customize-airootfs.sh\n' > "$CUSTOMIZE"
+  chmod 755 "$CUSTOMIZE"
+fi
+grep -q '"/root/customize_airootfs.sh"' "$PROFILE/profiledef.sh" || \
+  sed -i '/^file_permissions=(/a\  ["/root/customize_airootfs.sh"]="0:0:755"' "$PROFILE/profiledef.sh"
 printf '%s\n' "$SHA" > "$STAGE/HGOS-UPSTREAM-COMMIT"
 printf '%s\n' "$EDITION" > "$STAGE/HGOS-EDITION"
 printf 'Staging: %s\nUpstream: %s\n' "$STAGE" "$SHA"

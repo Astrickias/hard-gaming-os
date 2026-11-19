@@ -10,5 +10,8 @@ for edition in gaming allround; do
 done
 ! grep -qx steam "$ROOT/build/allround/packages.txt"
 grep -qx steam "$ROOT/build/gaming/packages.txt"
-for f in "$ROOT"/scripts/*.sh; do bash -n "$f"; done
-echo 'OK: Editionen, Assets, Pakettrennung und Shell-Syntax'
+for f in "$ROOT"/scripts/*.sh "$ROOT"/installer/*.sh; do bash -n "$f"; done
+python3 -I -m unittest discover -s "$ROOT/tests" -p 'test_stage_live_branding.py' 2>&1 | tail -n 1
+grep -q 'https://hardgaming.net/' "$ROOT/apps/hg-welcome/index.html"
+grep -q 'https://github.com/storytold/craft-launcher/releases' "$ROOT/apps/hg-welcome/index.html"
+echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose und Hello-Links'
