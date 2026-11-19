@@ -10,8 +10,8 @@ fi
 mapfile -t PKGS < <(find /usr/share/hard-gaming-os/packages -maxdepth 1 -name 'hgos-branding-*.pkg.tar.*' ! -name '*.sig' 2>/dev/null)
 [[ ${#PKGS[@]} -eq 1 ]] || { echo "HGOS: Branding-Paket nicht eindeutig (${#PKGS[@]} gefunden)" >&2; exit 7; }
 install -d "$TARGET/var/cache/hard-gaming-os"
-install -m644 "${PKGS[0]}" "$TARGET/var/cache/hard-gaming-os/"
+install -m644 "${PKGS[0]}" /usr/share/hard-gaming-os/pacman-local.conf "$TARGET/var/cache/hard-gaming-os/"
 # --ask=4 beantwortet die Frage nach dem Entfernen kollidierender Pakete mit Ja.
-chroot "$TARGET" pacman -U --noconfirm --ask=4 "/var/cache/hard-gaming-os/${PKGS[0]##*/}" \
+chroot "$TARGET" pacman --config /var/cache/hard-gaming-os/pacman-local.conf -U --noconfirm --ask=4 "/var/cache/hard-gaming-os/${PKGS[0]##*/}" \
   || { echo 'HGOS: Branding-Paket konnte nicht installiert werden' >&2; exit 7; }
 echo "HGOS: Branding-Paket installiert: ${PKGS[0]##*/}"

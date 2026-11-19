@@ -25,7 +25,7 @@ log "Login-Manager: plasmalogin.service, Standardziel: graphical.target"
 #    fastfetch) ins Live-System. Ersetzt kollidierende CachyOS-Grafikpakete.
 mapfile -t pkgs < <(find /usr/share/hard-gaming-os/packages -maxdepth 1 -name 'hgos-branding-*.pkg.tar.*' ! -name '*.sig')
 [[ ${#pkgs[@]} -eq 1 ]] || { echo "HGOS: Branding-Paket nicht eindeutig (${#pkgs[@]})" >&2; exit 1; }
-pacman -U --noconfirm --ask=4 "${pkgs[0]}"
+pacman --config /usr/share/hard-gaming-os/pacman-local.conf -U --noconfirm --ask=4 "${pkgs[0]}"
 /usr/lib/hard-gaming-os/apply-branding
 log "Branding-Paket: ${pkgs[0]##*/}"
 

@@ -23,7 +23,7 @@ Erwartete Ausgabe sind zwei ISO-Dateien samt SHA-256 unter `dist/iso/` und Build
 
 ## Abnahme
 
-Ablauf, Bootlog-Auswertung und Screenshots: [DIAGNOSE-2.1.4.md](DIAGNOSE-2.1.4.md) mit `scripts/vm-test.sh`. Prüfliste für 2.1.5: [TEST-2.1.5.md](TEST-2.1.5.md).
+Ablauf, Bootlog-Auswertung und Screenshots: [DIAGNOSE-2.1.4.md](DIAGNOSE-2.1.4.md) mit `scripts/vm-test.sh`. Prüfliste für 2.1.6: [TEST-2.1.6.md](TEST-2.1.6.md).
 
 Der Build startet per `sudo` von einem normalen Benutzer: `makepkg` baut das Paket `hgos-branding` als dieser Benutzer.
 

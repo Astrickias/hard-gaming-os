@@ -33,7 +33,7 @@ for package in "${VISIBLE[@]}"; do
   in_target pacman -Q "$package" >/dev/null 2>&1 && REMOVE+=("$package")
 done
 if (( ${#REMOVE[@]} )); then
-  if in_target pacman -R --noconfirm "${REMOVE[@]}"; then
+  if in_target pacman --config /var/cache/hard-gaming-os/pacman-local.conf -R --noconfirm "${REMOVE[@]}"; then
     log "Entfernt: ${REMOVE[*]}"
   else
     log "WARNUNG: konnte nicht entfernen (Abhängigkeit): ${REMOVE[*]}"
