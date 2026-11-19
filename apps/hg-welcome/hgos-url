@@ -4,6 +4,7 @@ case "${1:-}" in
   hgos://install*|hgos:install*)
     exec /usr/local/bin/hgos-install ;;
   hgos://update*|hgos:update*)
+    command -v hgos-update-center >/dev/null && exec hgos-update-center
     exec konsole --hide-menubar -p tabtitle="Hard Gaming OS aktualisieren" -e bash -c \
       'echo "Hard Gaming OS wird aktualisiert …"; echo; sudo pacman -Syu; echo; read -rp "Fertig. Enter zum Schließen …"' ;;
   *)

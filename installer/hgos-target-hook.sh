@@ -25,8 +25,16 @@ AUDIT="/usr/local/libexec/hgos-audit-target-packages"
 # 2) Branding-Paket (normalerweise schon vor plymouthcfg installiert, hier nur Absicherung).
 /usr/local/libexec/hgos-install-branding "$TARGET"
 
+# 2b) Hard Gaming Update Center (ersetzt per conflicts einen eventuell installierten cachyos-updater).
+mapfile -t UPD < <(find /usr/share/hard-gaming-os/packages -maxdepth 1 -name 'hgos-update-center-*.pkg.tar.*' ! -name '*.sig' 2>/dev/null)
+[[ ${#UPD[@]} -eq 1 ]] || { echo "HGOS: Update-Center-Paket nicht eindeutig (${#UPD[@]} gefunden)" >&2; exit 7; }
+install -m644 "${UPD[0]}" "$TARGET/var/cache/hard-gaming-os/"
+in_target pacman --config /var/cache/hard-gaming-os/pacman-local.conf -U --noconfirm --ask=4 "/var/cache/hard-gaming-os/${UPD[0]##*/}" \
+  || { echo 'HGOS: Update Center konnte nicht installiert werden (Abhängigkeiten im Zielsystem?)' >&2; exit 7; }
+log "Update Center installiert: ${UPD[0]##*/}"
+
 # 3) Sichtbare CachyOS-Programme entfernen (nicht Kernel, Repos, Schlüssel, Einstellungen).
-VISIBLE=(cachyos-hello cachyos-kernel-manager cachyos-packageinstaller cachyos-wallpapers
+VISIBLE=(cachyos-hello cachyos-kernel-manager cachyos-packageinstaller cachyos-wallpapers cachy-update
          cachyos-kde-settings cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git)
 REMOVE=()
 for package in "${VISIBLE[@]}"; do

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Hard Gaming Update Center
-Comment=Systemaktualisierungen verwalten
-Exec=cachyos-updater
-Icon=hard-gaming-os
-Terminal=false
-Categories=System;Settings;

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# Seit 2.2.0 gibt es nur noch eine Edition (intern "gaming"). Ein Argument ist optional.
+# Seit 2.3.0 gibt es nur noch eine Edition (intern "gaming"). Ein Argument ist optional.
 [[ $# -le 1 && ( $# -eq 0 || "$1" == gaming ) ]] || { echo 'Aufruf: sudo ./scripts/build-release.sh' >&2; exit 2; }
 EDITION="${1:-gaming}"
 source "$ROOT/config/release.env"

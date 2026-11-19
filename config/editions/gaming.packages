@@ -1,4 +1,4 @@
-# Hard Gaming OS – Programme, die immer installiert werden (eine Edition seit 2.2.0).
+# Hard Gaming OS – Programme, die immer installiert werden (eine Edition seit 2.3.0).
 # LibreOffice ist im Installer als Gruppe „Office & Alltag“ wählbar und steht deshalb nicht hier.
 steam
 lutris
@@ -7,3 +7,8 @@ mangohud
 gamemode
 kate
 ark
+# Laufzeitabhängigkeiten des Hard Gaming Update Center (aus den Repos)
+kirigami
+qqc2-desktop-style
+pacman-contrib
+expac

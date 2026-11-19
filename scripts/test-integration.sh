@@ -18,7 +18,9 @@ grep -q 'https://hardgaming.net/' "$ROOT/apps/hg-welcome/index.html"
 grep -q 'hgos://install' "$ROOT/apps/hg-welcome/index.html"
 grep -q 'hgos://update' "$ROOT/apps/hg-welcome/index.html"
 grep -q 'basiert auf <a href="https://cachyos.org/">CachyOS</a>' "$ROOT/apps/hg-welcome/index.html"
-for f in PKGBUILD hgos-branding.install root/usr/lib/hard-gaming-os/apply-branding \
+for f in ../hgos-update-center/PKGBUILD ../hgos-update-center/hgos-update-center.install ../hgos-update-center/brand-update-center.py \
+         ../hgos-update-center/assets/logo.svg ../hgos-update-center/assets/tray-uptodate.svg ../hgos-update-center/assets/tray-updates.svg \
+         PKGBUILD hgos-branding.install root/usr/lib/hard-gaming-os/apply-branding \
          root/usr/share/grub/themes/hard-gaming-os/theme.txt root/usr/share/grub/themes/hard-gaming-os/background.png \
          root/usr/share/color-schemes/HardGaming.colors root/usr/share/wallpapers/HardGamingOS/metadata.json \
          root/usr/share/plasma/look-and-feel/org.hardgaming.desktop/contents/defaults root/etc/xdg/fastfetch/config.jsonc; do
@@ -27,7 +29,10 @@ done
 python3 -c 'import json,sys; [json.load(open(f)) for f in sys.argv[1:]]' \
   "$ROOT"/packaging/hgos-branding/root/usr/share/wallpapers/*/metadata.json \
   "$ROOT"/packaging/hgos-branding/root/usr/share/plasma/look-and-feel/org.hardgaming.desktop/metadata.json
+grep -q '_commit=3011d681a65f2bb8d3193f39c384bdf75094db2b' "$ROOT/packaging/hgos-update-center/PKGBUILD"
+python3 -I -m py_compile "$ROOT/packaging/hgos-update-center/brand-update-center.py"
+grep -qx pacman-contrib "$ROOT/config/editions/gaming.packages"
 grep -q '^  SidebarText:' "$ROOT/installer/calamares/branding/hardgamingos/branding.desc"
 for f in "$ROOT"/apps/hg-welcome/hg-welcome "$ROOT"/apps/hg-welcome/hgos-url "$ROOT"/packaging/hgos-branding/root/usr/lib/hard-gaming-os/apply-branding; do bash -n "$f"; done
 grep -q 'https://github.com/storytold/craft-launcher/releases' "$ROOT/apps/hg-welcome/index.html"
-echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello und Branding-Paket'
+echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket und Update Center'

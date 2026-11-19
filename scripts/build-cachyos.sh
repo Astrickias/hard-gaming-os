@@ -167,8 +167,8 @@ fi
 for binary in pacman mkarchiso mksquashfs grub-mkrescue; do
  command -v "$binary" >/dev/null || { echo "Abhängigkeit fehlt: $binary" >&2; exit 5; }
 done
-# Branding-Paket für Live- und Zielsystem (makepkg läuft als aufrufender Benutzer).
-"$ROOT/scripts/build-branding-package.sh" "$PROFILE/airootfs/usr/share/hard-gaming-os/packages"
+# HG-Pakete (Branding, Update Center) für Live- und Zielsystem (makepkg läuft als aufrufender Benutzer).
+"$ROOT/scripts/build-packages.sh" "$PROFILE/airootfs/usr/share/hard-gaming-os/packages"
 install -Dm644 "$ROOT/packaging/hgos-branding/pacman-local.conf" "$PROFILE/airootfs/usr/share/hard-gaming-os/pacman-local.conf"
 # Execute CachyOS native build pipeline from isolated staged upstream checkout.
 cd "$STAGE"

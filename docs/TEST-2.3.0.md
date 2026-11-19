@@ -1,4 +1,4 @@
-# Testberichte 2.1.4 / 2.1.6 und Prüfliste 2.2.0
+# Testberichte 2.1.4 / 2.1.6 und Prüfliste 2.3.0
 
 ## Ergebnis 2.1.4 Gaming (19.11.2026, virt-manager, QEMU/KVM, UEFI)
 
@@ -35,9 +35,9 @@ Getestet von Dominik, Screenshots sind echte VM-Screenshots.
 
 Bewusst unverändert: Kernel `linux-cachyos`, Repos, Mirrorlisten, Schlüssel, `pacman.conf`, `cachyos-settings`, `cachyos-hooks`, `cachyos-ananicy-rules`, `cachyos-snapper-support`, fish/zsh-Grundkonfiguration, `ID_LIKE="cachyos arch"` in os-release.
 
-## Prüfliste 2.2.0 (eine Edition)
+## Prüfliste 2.3.0 (eine Edition, mit Update Center)
 
-1. Build: `sudo env HGOS_UPSTREAM_REF=3215497d2e8c5fea90e185affcf973dfa2cf790b HGOS_ACK_EXPERIMENTAL=1 HGOS_ACK_TARGET_UNVERIFIED=1 ./scripts/build-release.sh`. Erwartet: `dist/iso/Hard-Gaming-OS-2.2.0-beta-x86_64.iso` und `.sha256`.
+1. Build: `sudo env HGOS_UPSTREAM_REF=3215497d2e8c5fea90e185affcf973dfa2cf790b HGOS_ACK_EXPERIMENTAL=1 HGOS_ACK_TARGET_UNVERIFIED=1 ./scripts/build-release.sh`. Erwartet: `dist/iso/Hard-Gaming-OS-2.3.0-beta-x86_64.iso` und `.sha256`.
 2. Live: Bootmenü, Plymouth-Logo, KDE mit HG-Wallpaper und grünem Farbschema, Hello im eigenen Fenster ohne Datenschutz-Tab.
 3. Hello → „Installer starten“. Calamares öffnet sich ohne Handarbeit. Seitenleiste lesbar, Hostname `hardgaming-…`, Bootloader-Bild HG.
 4. Installation mit GRUB, „Festplatte löschen“. In der Paketauswahl ist „Office & Alltag“ angehakt.
@@ -51,8 +51,9 @@ Bewusst unverändert: Kernel `linux-cachyos`, Repos, Mirrorlisten, Schlüssel, `
    pacman -Q steam lutris heroic-games-launcher kate ark libreoffice-fresh-de
    ```
    Erwartet: Keine der vier ersetzten Grafikpakete und keine CachyOS-Programme mehr in der Liste.
-7. `sudo pacman -Syu` ausführen, danach `cat /etc/os-release` und `grep DISTRIBUTOR /etc/default/grub`: weiterhin Hard Gaming OS.
-8. Optional: Legacy-BIOS-VM mit denselben Schritten.
+7. Update Center: Startmenü → „Hard Gaming Update Center“ öffnet sich mit HG-Logo, grünen Akzenten und deutschen Reitern. Unten rechts erscheint das HG-Symbol. Hello → „Update Center öffnen“ startet es ebenfalls. `pacman -Q hgos-update-center` zeigt das Paket.
+8. Im Update Center oder mit `sudo pacman -Syu` aktualisieren, danach `cat /etc/os-release` und `grep DISTRIBUTOR /etc/default/grub`: weiterhin Hard Gaming OS.
+9. Optional: Legacy-BIOS-VM mit denselben Schritten.
 
 ## Build-Abbruch 2.1.5 (19.11.2026)
 

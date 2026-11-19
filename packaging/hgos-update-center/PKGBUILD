@@ -1,0 +1,37 @@
+# Hard Gaming OS – Update Center
+# Fork von cachy-updater (akanbaz, GPL-3.0-or-later) auf festem Commit.
+# Gebaut von scripts/build-packages.sh (nicht direkt aus diesem Ordner).
+pkgname=hgos-update-center
+pkgver=@VERSION@
+pkgrel=1
+_commit=3011d681a65f2bb8d3193f39c384bdf75094db2b
+pkgdesc="Hard Gaming OS Update Center: Repo-, AUR- und Flatpak-Updates mit Benachrichtigung"
+arch=(x86_64)
+url="https://hardgaming.net/"
+license=(GPL-3.0-or-later)
+depends=(qt6-base qt6-declarative kirigami qqc2-desktop-style breeze-icons pacman polkit pacman-contrib expac)
+makedepends=(cmake ninja git python)
+optdepends=('paru: AUR-Updates' 'yay: AUR-Updates (Alternative)' 'flatpak: Flatpak-Updates'
+            'fwupd: Firmware-Updates' 'snapper: Snapshot vor Updates')
+provides=(cachyos-updater)
+conflicts=(cachyos-updater cachy-updater)
+install=hgos-update-center.install
+source=("cachy-updater::git+https://github.com/akanbaz/cachy-updater.git#commit=$_commit")
+sha256sums=('SKIP')
+
+prepare() {
+  python3 "$startdir/brand-update-center.py" "$srcdir/cachy-updater" "$startdir/assets"
+}
+
+build() {
+  cmake -B build -S "$srcdir/cachy-updater/native" -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  ln -s cachyos-updater "$pkgdir/usr/bin/hgos-update-center"
+  install -Dm644 "$srcdir/cachy-updater/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$srcdir/cachy-updater/README.md" "$pkgdir/usr/share/doc/$pkgname/UPSTREAM-README.md"
+}

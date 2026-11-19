@@ -1,22 +1,11 @@
-# Hard Gaming Update Center – Upstream-Integrationspaket
+# Hard Gaming Update Center
 
-Technische Basis: https://github.com/akanbaz/cachy-updater (C++ / KDE Kirigami).
+Seit 2.3.0 ein eigenes Paket: `packaging/hgos-update-center`.
 
-**Status:** Vorbereitete Quellcode-Fork-Integration, noch kein gebautes oder getestetes Programm.
+- Basis: [cachy-updater](https://github.com/akanbaz/cachy-updater) von akanbaz, Commit `3011d681a65f2bb8d3193f39c384bdf75094db2b`, Lizenz GPL-3.0-or-later (bleibt erhalten, Lizenztext liegt im Paket unter `/usr/share/licenses/hgos-update-center/`).
+- `brand-update-center.py` setzt Name, HG-Farben, HG-Logo und Tray-Symbole und übersetzt die wichtigsten Texte ins Deutsche. Passt eine Upstream-Stelle nicht mehr, bricht der Paketbau ab.
+- Technische Kennungen bleiben upstream: Programm `cachyos-updater` (zusätzlich `hgos-update-center`), `org.cachyos.updater`-Dateien, Polkit-Regel, systemd-User-Units.
+- Das Taskleistensymbol startet für alle Benutzer (`systemctl --global enable org.cachyos.updater-tray.service`).
+- Grafiken in `packaging/hgos-update-center/assets/` sind SVG-Hüllen mit eingebettetem PNG aus `assets/HG OS.png` und `hg-tray*.png`.
 
-`prepare-fork.sh` lädt den Quellcode auf einem Rechner mit Netzwerkzugang, ersetzt ausschließlich sichtbare Branding-Texte in QML und Desktop-Dateien und übernimmt das originale HG-Logo. Es ändert keine Update-Logik und installiert keine Pakete. Die ursprüngliche Lizenz muss beibehalten werden. Vor einer Weiterverteilung Lizenz und Rechte prüfen.
-
-## CachyOS-Buildrechner
-
-```bash
-sudo pacman -S --needed git cmake ninja gcc qt6-base qt6-declarative kirigami qqc2-desktop-style breeze-icons pacman polkit
-bash apps/hg-update-center/prepare-fork.sh
-cd build/hg-update-center/upstream/native
-cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-./build/cachyos-updater
-```
-
-Das Upstream-Binary heißt vorerst weiter `cachyos-updater`; der Dateiname ist nicht Teil des sichtbaren Produktbrandings. Eine Umbenennung und eine echte Paketierung sind nach einem erfolgreichen Build zu prüfen.
-
-**Sicherheit:** Keine `sudo cmake --install`-Ausführung auf dem Hauptrechner vor einem VM-Test. AUR- und Flatpak-Aktionen nur über die Originalimplementierung.
+Noch englisch: einzelne Knöpfe und Meldungen in Updates, Aufräumen, Firmware und Verlauf.

@@ -36,16 +36,6 @@ MimeType=x-scheme-handler/hgos;
 NoDisplay=true
 Terminal=false
 DESKTOP
-cat > "$TARGET/usr/share/applications/hgos-update.desktop" <<'DESKTOP'
-[Desktop Entry]
-Type=Application
-Name=Hard Gaming OS aktualisieren
-Comment=Alle Pakete auf den neuesten Stand bringen
-Exec=/usr/local/bin/hgos-url hgos://update
-Icon=system-software-update
-Terminal=false
-Categories=System;Settings;
-DESKTOP
 # Firefox: kein Erststart-/Datenschutz-Tab vor Hello, Startseite hardgaming.net,
 # hgos://-Links ohne Rückfrage an das System weitergeben.
 install -Dm644 /dev/stdin "$TARGET/etc/firefox/policies/policies.json" <<'JSON'
