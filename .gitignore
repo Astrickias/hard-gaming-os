@@ -7,3 +7,4 @@
 *.pkg.tar.*
 __pycache__/
 *.pyc
+/dist/packages/

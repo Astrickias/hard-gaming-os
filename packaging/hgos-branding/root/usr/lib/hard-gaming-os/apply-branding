@@ -5,6 +5,22 @@
 set -euo pipefail
 share=/usr/share/hard-gaming-os
 
+# Beim ersten Lauf die Originaldateien sichern (für restore-branding beim Entfernen).
+backup=/var/lib/hard-gaming-os/backup
+if [[ ! -e $backup/.complete ]]; then
+  install -d -m700 "$backup"
+  for file in /etc/os-release /etc/lsb-release /etc/issue /etc/default/grub \
+              /etc/default/grub-btrfs/config /etc/plymouth/plymouthd.conf; do
+    if [[ -e $file || -L $file ]]; then
+      install -d "$backup$(dirname "$file")"
+      cp -a "$file" "$backup$file"
+    else
+      echo "$file" >> "$backup/.missing"
+    fi
+  done
+  touch "$backup/.complete"
+fi
+
 if [[ -s $share/os-release ]]; then
   install -m644 "$share/os-release" /etc/os-release.hgos-new
   mv -f /etc/os-release.hgos-new /etc/os-release

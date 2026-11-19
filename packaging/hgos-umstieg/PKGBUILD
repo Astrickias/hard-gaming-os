@@ -1,0 +1,19 @@
+# Hard Gaming OS – Umstiegspaket für bestehende CachyOS-Installationen
+# Macht aus CachyOS (KDE Plasma) Hard Gaming OS, ohne Neuinstallation. Entfernen stellt
+# os-release, GRUB und Plymouth wieder her (über hgos-branding).
+# Gebaut von scripts/build-packages.sh (nicht direkt aus diesem Ordner).
+pkgname=hgos-umstieg
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc="Hard Gaming OS auf einem bestehenden CachyOS: Branding, Hello, Update Center"
+arch=(any)
+url="https://hardgaming.net/"
+license=(LicenseRef-HardGaming)
+depends=(hgos-branding hgos-update-center qt6-declarative plasma-workspace)
+optdepends=('steam: Gaming' 'lutris: Gaming' 'heroic-games-launcher: Epic/GOG/Amazon'
+            'mangohud: FPS-Anzeige' 'gamemode: Leistungsmodus' 'firefox: Browser')
+install=hgos-umstieg.install
+
+package() {
+  cp -a "$startdir/root/." "$pkgdir/"
+}

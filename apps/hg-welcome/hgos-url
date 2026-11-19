@@ -7,6 +7,12 @@ case "${1:-}" in
     command -v hgos-update-center >/dev/null && exec hgos-update-center
     exec konsole --hide-menubar -p tabtitle="Hard Gaming OS aktualisieren" -e bash -c \
       'echo "Hard Gaming OS wird aktualisiert …"; echo; sudo pacman -Syu; echo; read -rp "Fertig. Enter zum Schließen …"' ;;
+  hgos://design*|hgos:design*)
+    if hgos-design-anwenden; then
+      notify-send -i /usr/share/hard-gaming-os/hg-os-logo.png "Hard Gaming OS" "Hard-Gaming-Design übernommen."
+    else
+      notify-send "Hard Gaming OS" "Design konnte nicht übernommen werden."
+    fi ;;
   hgos://settings*|hgos:settings*)
     exec systemsettings ;;
   hgos://app/heroic*)

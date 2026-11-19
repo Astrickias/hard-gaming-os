@@ -85,7 +85,7 @@ def main():
     stage = args.stage
     profile = stage / "archiso"
     assets = Path(__file__).resolve().parent.parent / "branding/full"
-    name = "Hard Gaming OS"  # seit 2.4.0 eine Edition
+    name = "Hard Gaming OS"  # seit 2.2.0 eine Edition
     for path in (profile / "grub").glob("*.cfg"):
         source = path.read_text()
         source, count = re.subn(r'(?m)^(menuentry "[^"\n]*)CachyOS', rf'\g<1>{name}', source)

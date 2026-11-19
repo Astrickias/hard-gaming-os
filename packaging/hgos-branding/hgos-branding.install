@@ -1,9 +1,16 @@
 post_install() {
   /usr/lib/hard-gaming-os/apply-branding
-  echo "Hard Gaming OS: Branding aktiv. GRUB und initramfs beim nächsten Kernel-Update oder mit"
+  echo "Hard Gaming OS: Branding aktiv. GRUB und Startbild übernimmst du mit:"
   echo "  sudo grub-mkconfig -o /boot/grub/grub.cfg && sudo mkinitcpio -P"
-  echo "aktualisieren."
 }
 post_upgrade() {
   /usr/lib/hard-gaming-os/apply-branding
+}
+pre_remove() {
+  /usr/lib/hard-gaming-os/restore-branding
+}
+post_remove() {
+  echo "Hard Gaming OS: Branding entfernt. Für das CachyOS-Aussehen:"
+  echo "  sudo pacman -S cachyos-grub-theme cachyos-plymouth-bootanimation cachyos-iridescent-kde"
+  echo "  sudo grub-mkconfig -o /boot/grub/grub.cfg && sudo mkinitcpio -P"
 }

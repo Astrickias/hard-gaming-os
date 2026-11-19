@@ -23,7 +23,7 @@ install -Dm644 "$ROOT/branding/full/issue" "$OUT/overlay/usr/share/hard-gaming-o
 install -Dm644 "$ROOT/branding/full/plasma-login.conf" "$OUT/overlay/usr/share/hard-gaming-os/plasma-login.conf"
 install -Dm644 "$ROOT/branding/full/plasma-wallpaper.desktop" "$OUT/overlay/etc/xdg/autostart/hgos-plasma-wallpaper.desktop"
 install -Dm755 "$ROOT/branding/full/hgos-plasma-wallpaper" "$OUT/overlay/usr/local/libexec/hgos-plasma-wallpaper"
-# Plymouth-Theme, GRUB-Theme, Wallpaper-Pakete und Plasma-Design liefert ab 2.4.0 das Paket hgos-branding.
+# Plymouth-Theme, GRUB-Theme, Wallpaper-Pakete und Plasma-Design liefert ab 2.1.5 das Paket hgos-branding.
 
 { cat "$ROOT/config/common.packages"; cat "$ROOT/config/editions/$EDITION.packages"; } | sed '/^[[:space:]]*#/d; /^[[:space:]]*$/d' | LC_ALL=C sort -u > "$OUT/packages.txt"
 cat > "$OUT/BUILD-NOTES.txt" <<EOF
