@@ -17,7 +17,7 @@ ApplicationWindow {
     color: "#0b1013"
 
     readonly property bool live: Qt.application.arguments.indexOf("--live") >= 0
-    readonly property string version: "2.7.0 Beta"
+    readonly property string version: "2.7.1 Beta"
     readonly property color green: "#54ef61"
     readonly property color greenDark: "#20332b"
     readonly property color text: "#eaf0f0"

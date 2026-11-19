@@ -52,7 +52,7 @@ for f in PKGBUILD hgos-konsole.install brand-konsole.py root/usr/bin/hard-gaming
          root/usr/share/wayland-sessions/hard-gaming-konsole.desktop root/usr/share/applications/hard-gaming-konsole.desktop; do
   test -e "$K/$f" || { echo "Konsolen-Paket unvollständig: $f" >&2; exit 1; }
 done
-for f in "$K"/root/usr/bin/hard-gaming-konsole "$K"/root/usr/lib/hard-gaming-os/konsole-*; do bash -n "$f"; done
+for f in "$K"/root/usr/bin/hard-gaming-konsole "$K"/root/usr/bin/hgos-konsole-beenden "$K"/root/usr/lib/hard-gaming-os/konsole-*; do bash -n "$f"; done
 python3 -I -m py_compile "$K/brand-konsole.py"
 grep -q '_ogui_commit=a79179dc5bc737b3ccaf2b7f66bd67d76f615e4c' "$K/PKGBUILD"
 grep -q 'OGUI_FEATURE_UPDATER=0' "$K/root/usr/lib/hard-gaming-os/konsole-common.sh"

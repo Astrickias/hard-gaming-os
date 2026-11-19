@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Notausgang: beendet die Hard Gaming Konsole des eigenen Benutzers.
+# Bei schwarzem Bildschirm: Strg+Alt+F3, anmelden, „hgos-konsole-beenden“ eingeben,
+# danach mit Strg+Alt+F1 (oder F2) zurück zum Anmeldebildschirm.
+pkill -u "$USER" -f '/usr/share/opengamepadui/opengamepad-ui' 2>/dev/null
+pkill -u "$USER" -x gamescope 2>/dev/null
+sleep 2
+pkill -9 -u "$USER" -x gamescope 2>/dev/null
+echo "Hard Gaming Konsole beendet. Zurück zum Anmeldebildschirm: Strg+Alt+F1 oder Strg+Alt+F2."

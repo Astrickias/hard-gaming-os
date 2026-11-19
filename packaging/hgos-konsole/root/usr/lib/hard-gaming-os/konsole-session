@@ -1,28 +1,52 @@
 #!/usr/bin/env bash
 # Sitzung „Hard Gaming Konsole“ (Auswahl im Anmeldebildschirm).
-# Sicherheitsnetz: Geht der Start schief oder bricht die Konsole in den ersten
-# Sekunden ab, startet automatisch der normale KDE-Desktop – kein schwarzer Bildschirm.
+# Sicherheitsnetz: Prüfungen vor dem Start, ein Wächter während des Starts und
+# Rückfall auf den normalen KDE-Desktop – kein schwarzer Bildschirm.
 set -u
 . /usr/lib/hard-gaming-os/konsole-common.sh
 
 desktop() {
   log "Wechsel zum Desktop: $1"
   [[ $KONSOLE_DESKTOP_FALLBACK == 1 ]] || exit 1
+  export XDG_CURRENT_DESKTOP=KDE XDG_SESSION_DESKTOP=KDE
   exec /usr/lib/plasma-dbus-run-session-if-needed /usr/bin/startplasma-wayland
 }
 
 log "Sitzung startet ($(gpu_ids | tr '\n' ' '))"
 if ! reason="$(konsole_check)"; then desktop "$reason"; fi
+# Hybrid-Laptops (NVIDIA + interne Grafik): gamescope als Sitzung ist dort noch
+# nicht erprobt und hat schwarze Bildschirme erzeugt. Erst nach gezieltem Test
+# per KONSOLE_HYBRID_SITZUNG=1 freigeben.
+if is_hybrid && [[ $KONSOLE_HYBRID_SITZUNG != 1 ]]; then
+  desktop "Hybrid-Grafik erkannt – Konsolen-Sitzung hier noch gesperrt (Fenster-Modus nutzen)"
+fi
 
-export XDG_CURRENT_DESKTOP=gamescope
-export XDG_SESSION_DESKTOP=hard-gaming-konsole
+export XDG_CURRENT_DESKTOP=gamescope XDG_SESSION_DESKTOP=hard-gaming-konsole
+PIPE="/run/user/$UID/opengamepadui/opengamepadui-0"
+rm -f "$PIPE"   # alte Markierung weg: die Oberfläche legt sie neu an, sobald sie geladen ist
 start=$SECONDS
-# shellcheck disable=SC2046
-gamescope -e -f --xwayland-count 2 $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" >>"$KONSOLE_LOG" 2>&1
-rc=$?
+# shellcheck disable=SC2046,SC2086
+gamescope -e -f --xwayland-count 2 $(gpu_args) $KONSOLE_GAMESCOPE_EXTRA -- "$KONSOLE_BIN" >>"$KONSOLE_LOG" 2>&1 &
+gs=$!
+
+# Wächter: Ist die Konsolen-Oberfläche nach der Wartezeit nicht geladen, hängt der
+# Start (typisch: schwarzer Bildschirm). Dann beenden und zum Desktop wechseln.
+# Notausgang für alle anderen Fälle: Strg+Alt+F3, anmelden, hgos-konsole-beenden.
+for (( i = 0; i < KONSOLE_WAECHTER_SEKUNDEN; i++ )); do
+  sleep 1
+  kill -0 "$gs" 2>/dev/null || break
+  [[ -e $PIPE ]] && { ok=1; break; }
+done
+if [[ ${ok:-0} != 1 ]] && kill -0 "$gs" 2>/dev/null; then
+  log "Wächter: Konsole nach ${KONSOLE_WAECHTER_SEKUNDEN} s nicht gestartet – gamescope wird beendet"
+  kill "$gs" 2>/dev/null; sleep 3; kill -9 "$gs" 2>/dev/null
+  wait "$gs" 2>/dev/null
+  desktop "Konsole hat nicht rechtzeitig gestartet"
+fi
+
+wait "$gs"; rc=$?
 log "Konsole beendet (Code $rc nach $((SECONDS - start)) s)"
 if (( rc != 0 && SECONDS - start < 20 )); then
-  export XDG_CURRENT_DESKTOP=KDE XDG_SESSION_DESKTOP=KDE
   desktop "Konsole ist beim Start abgebrochen (Code $rc)"
 fi
 exit 0
