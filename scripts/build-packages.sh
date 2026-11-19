@@ -62,6 +62,16 @@ umstieg_extra() { # Systemkennung, Logos und Hello aus dem Projekt übernehmen
   sed 's#/usr/local/bin/#/usr/bin/#g' "$stage/etc/xdg/autostart/hg-welcome.desktop" > "$root/etc/xdg/autostart/hg-welcome.desktop"
 }
 
+keyring_extra() { # öffentlicher Schlüssel und Repo-Adresse
+  cp -a "$ROOT/keys" "$1/keys"
+  sed -i "s|@REPO_URL@|$HGOS_REPO_URL|" "$1/root/usr/lib/hard-gaming-os/pacman-repo"
+}
+
+if [[ -s "$ROOT/keys/hardgaming.gpg" && -s "$ROOT/keys/hardgaming-trusted" ]]; then
+  build_pkg hgos-keyring keyring_extra
+else
+  echo 'Hinweis: keys/hardgaming.gpg fehlt noch – hgos-keyring wird übersprungen (siehe docs/PAKET-REPO.md).' >&2
+fi
 build_pkg hgos-branding branding_extra
 build_pkg hgos-update-center
 build_pkg hgos-umstieg umstieg_extra

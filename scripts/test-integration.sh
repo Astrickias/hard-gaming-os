@@ -20,6 +20,7 @@ grep -q 'hgos://update' "$ROOT/apps/hg-welcome/index.html"
 grep -q 'basiert auf <a href="https://cachyos.org/">CachyOS</a>' "$ROOT/apps/hg-welcome/index.html"
 for f in ../hgos-update-center/PKGBUILD ../hgos-update-center/hgos-update-center.install ../hgos-update-center/brand-update-center.py \
          ../hgos-update-center/assets/logo.svg ../hgos-update-center/assets/tray-uptodate.svg ../hgos-update-center/assets/tray-updates.svg \
+         ../hgos-keyring/PKGBUILD ../hgos-keyring/hgos-keyring.install ../hgos-keyring/root/usr/lib/hard-gaming-os/pacman-repo \
          ../hgos-umstieg/PKGBUILD ../hgos-umstieg/hgos-umstieg.install \
          root/usr/lib/hard-gaming-os/restore-branding root/usr/bin/hgos-design-anwenden root/usr/bin/hgos-design-zuruecksetzen \
          PKGBUILD hgos-branding.install root/usr/lib/hard-gaming-os/apply-branding \
@@ -40,5 +41,8 @@ grep -q 'hgos://install' "$ROOT/apps/hg-welcome/qml/Main.qml"
 grep -q 'hgos://update' "$ROOT/apps/hg-welcome/qml/Main.qml"
 for f in "$ROOT"/apps/hg-welcome/hg-welcome "$ROOT"/apps/hg-welcome/hgos-url "$ROOT"/packaging/hgos-branding/root/usr/lib/hard-gaming-os/* "$ROOT"/packaging/hgos-branding/root/usr/bin/* "$ROOT"/packaging/*/*.install; do bash -n "$f"; done
 grep -q 'pre_remove' "$ROOT/packaging/hgos-branding/hgos-branding.install"
+bash -n "$ROOT/packaging/hgos-keyring/root/usr/lib/hard-gaming-os/pacman-repo"
+python3 -c 'import sys,yaml; yaml.safe_load(open(sys.argv[1]))' "$ROOT/.github/workflows/pakete.yml" 2>/dev/null || python3 -c 'import sys; open(sys.argv[1]).read()' "$ROOT/.github/workflows/pakete.yml"
+grep -q '^HGOS_REPO_URL=' "$ROOT/config/release.env"
 grep -q 'https://github.com/storytold/craft-launcher/releases' "$ROOT/apps/hg-welcome/index.html"
-echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket, Update Center, Hello-App und Umstiegspaket'
+echo 'OK: Editionen, Assets, Pakettrennung, Shell-Syntax, Bootmenü-Diagnose, Hello, Branding-Paket, Update Center, Hello-App, Umstiegspaket und Paket-Repo'

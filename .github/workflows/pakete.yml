@@ -1,0 +1,87 @@
+# Hard Gaming OS – Pakete bauen, signieren und als pacman-Repo [hardgaming] veröffentlichen.
+# Auslöser: Versions-Tag (v*) oder manuell. Ziel: GitHub Pages (…/x86_64/).
+# Benötigt das Secret HGOS_GPG_PRIVATE_KEY (ASCII-armored, ohne Passphrase; geschützt
+# durch GitHub Secrets) und in den Repo-Einstellungen die Pages-Quelle „GitHub Actions“.
+name: Pakete
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pakete
+  cancel-in-progress: false
+
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Werkzeuge installieren
+        run: |
+          pacman -Syu --noconfirm --needed base-devel git sudo python cmake ninja \
+            qt6-base qt6-declarative kirigami qqc2-desktop-style breeze-icons polkit \
+            pacman-contrib expac plymouth
+          useradd -m builder
+
+      - uses: actions/checkout@v4
+
+      - name: Schlüssel vorhanden?
+        env:
+          KEY: ${{ secrets.HGOS_GPG_PRIVATE_KEY }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::Secret HGOS_GPG_PRIVATE_KEY fehlt (docs/PAKET-REPO.md)"; exit 1; }
+          [ -s keys/hardgaming.gpg ] || { echo "::error::keys/hardgaming.gpg fehlt"; exit 1; }
+
+      - name: Pakete bauen
+        run: |
+          chown -R builder: "$GITHUB_WORKSPACE"
+          sudo -u builder ./scripts/build-packages.sh "$GITHUB_WORKSPACE/repo/x86_64"
+
+      - name: Signieren und Repo-Datenbank erzeugen
+        env:
+          KEY: ${{ secrets.HGOS_GPG_PRIVATE_KEY }}
+        run: |
+          export GNUPGHOME="$(mktemp -d)"
+          chmod 700 "$GNUPGHOME"
+          printf '%s\n' "$KEY" | gpg --batch --import
+          FPR="$(gpg --batch --with-colons --list-secret-keys | awk -F: '/^fpr/ {print $10; exit}')"
+          grep -q "^$FPR:" keys/hardgaming-trusted || { echo "::error::Secret-Schlüssel passt nicht zu keys/hardgaming-trusted"; exit 1; }
+          sign() { gpg --batch --yes --local-user "$FPR" --detach-sign --no-armor "$1"; }
+          cd repo/x86_64
+          for pkg in *.pkg.tar.zst; do sign "$pkg"; done
+          repo-add hardgaming.db.tar.gz *.pkg.tar.zst
+          sign hardgaming.db.tar.gz
+          sign hardgaming.files.tar.gz
+          # GitHub Pages liefert keine Symlinks aus: Datenbanken als echte Dateien ablegen.
+          rm -f hardgaming.db hardgaming.files
+          cp hardgaming.db.tar.gz hardgaming.db
+          cp hardgaming.db.tar.gz.sig hardgaming.db.sig
+          cp hardgaming.files.tar.gz hardgaming.files
+          cp hardgaming.files.tar.gz.sig hardgaming.files.sig
+          ls -la
+          cat > ../index.html <<'HTML'
+          <!doctype html><meta charset="utf-8"><title>Hard Gaming OS Paket-Repo</title>
+          <h1>Hard Gaming OS – Paket-Repo [hardgaming]</h1>
+          <p>Dieses Verzeichnis ist für pacman gedacht. Infos: <a href="https://hardgaming.net/">hardgaming.net</a></p>
+          HTML
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
+
+  veroeffentlichen:
+    needs: bauen
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

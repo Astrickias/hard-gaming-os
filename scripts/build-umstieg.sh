@@ -6,4 +6,4 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 "$ROOT/scripts/build-packages.sh" "$ROOT/dist/packages"
 echo
 echo 'Fertig. Installieren auf einem CachyOS-System (vorher Backup!):'
-echo "  sudo pacman -U $ROOT/dist/packages/hgos-branding-*.pkg.tar.* $ROOT/dist/packages/hgos-update-center-*.pkg.tar.* $ROOT/dist/packages/hgos-umstieg-*.pkg.tar.*"
+echo "  sudo pacman -U $ROOT/dist/packages/hgos-keyring-*.pkg.tar.* $ROOT/dist/packages/hgos-branding-*.pkg.tar.* $ROOT/dist/packages/hgos-update-center-*.pkg.tar.* $ROOT/dist/packages/hgos-umstieg-*.pkg.tar.*"

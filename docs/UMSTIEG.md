@@ -18,7 +18,8 @@ Vorher ein Backup von `/home` anlegen. Empfohlen: zuerst in einer CachyOS-VM tes
 
 ```bash
 ./scripts/build-umstieg.sh            # als normaler Benutzer, baut nach dist/packages/
-sudo pacman -U dist/packages/hgos-branding-*.pkg.tar.* \
+sudo pacman -U dist/packages/hgos-keyring-*.pkg.tar.* \
+               dist/packages/hgos-branding-*.pkg.tar.* \
                dist/packages/hgos-update-center-*.pkg.tar.* \
                dist/packages/hgos-umstieg-*.pkg.tar.*
 ```
@@ -32,13 +33,13 @@ sudo mkinitcpio -P        # Startbild übernehmen
 
 Abmelden und neu anmelden.
 
-Sobald das Paket-Repo auf hardgaming.net steht, reicht: Repo eintragen und `sudo pacman -S hgos-umstieg`.
+Einfacher über das Paket-Repo: siehe [PAKET-REPO.md](PAKET-REPO.md), Abschnitt „Umstieg über das Repo“. `hgos-keyring` ist seit 2.6.0 Voraussetzung und trägt das Repo `[hardgaming]` ein.
 
 ## Rückweg
 
 ```bash
 hgos-design-zuruecksetzen
-sudo pacman -Rns hgos-umstieg hgos-update-center hgos-branding
+sudo pacman -Rns hgos-umstieg hgos-update-center hgos-branding hgos-keyring
 sudo pacman -S cachyos-grub-theme cachyos-plymouth-bootanimation cachyos-iridescent-kde
 sudo grub-mkconfig -o /boot/grub/grub.cfg && sudo mkinitcpio -P
 ```

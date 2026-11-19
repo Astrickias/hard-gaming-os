@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Trägt das Paket-Repo [hardgaming] in /etc/pacman.conf ein oder entfernt es wieder.
+# Aufruf: pacman-repo add|remove   (läuft aus den Paket-Skripten von hgos-keyring)
+set -euo pipefail
+CONF=/etc/pacman.conf
+URL='@REPO_URL@'
+BEGIN='# >>> Hard Gaming OS Paket-Repo (verwaltet von hgos-keyring)'
+END='# <<< Hard Gaming OS Paket-Repo'
+case "${1:-}" in
+  add)
+    grep -qxF "$BEGIN" "$CONF" && exit 0
+    if grep -q '^\[hardgaming\]' "$CONF"; then
+      echo 'Hinweis: [hardgaming] steht bereits manuell in pacman.conf, keine Änderung.'
+      exit 0
+    fi
+    cp -a "$CONF" "$CONF.hgos-backup"
+    printf '\n%s\n[hardgaming]\nServer = %s\n%s\n' "$BEGIN" "$URL" "$END" >> "$CONF"
+    echo 'Hard Gaming OS: Paket-Repo [hardgaming] eingetragen.'
+    ;;
+  remove)
+    grep -qxF "$BEGIN" "$CONF" || exit 0
+    sed -i "\|^$BEGIN\$|,\|^$END\$|d" "$CONF"
+    sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$CONF"
+    echo 'Hard Gaming OS: Paket-Repo [hardgaming] ausgetragen.'
+    ;;
+  *) echo "Aufruf: $0 add|remove" >&2; exit 2 ;;
+esac
