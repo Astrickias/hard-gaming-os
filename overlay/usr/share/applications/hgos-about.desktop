@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=About Hard Gaming OS
+Name[de]=Über Hard Gaming OS
+Exec=sh -c "cat /usr/share/hard-gaming-os/release-info; printf '\nEdition: '; cat /usr/share/hard-gaming-os/edition; read -r -p 'Enter zum Schließen...'"
+Terminal=true
+Icon=/usr/share/hard-gaming-os/hg-os-logo.png
+Categories=System;

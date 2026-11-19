@@ -1,0 +1,10 @@
+Statische Prüfungen erfolgreich. Kein ISO- oder Installationstest.
+
+STDERR:
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.004s
+
+OK
+
+EXIT=0

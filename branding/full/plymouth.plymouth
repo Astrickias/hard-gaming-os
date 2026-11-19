@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Hard Gaming OS
+Description=Hard Gaming OS boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/hard-gaming-os
+ScriptFile=/usr/share/plymouth/themes/hard-gaming-os/hard-gaming-os.script

@@ -1,0 +1,26 @@
+---
+componentName: hardgamingos
+welcomeStyleCalamares: true
+windowExpanding: normal
+strings:
+  productName: Hard Gaming OS
+  shortProductName: Hard Gaming OS
+  version: 2.1.3 Beta
+  shortVersion: 2.1.3
+  versionedName: Hard Gaming OS 2.1.3 Beta
+  shortVersionedName: Hard Gaming OS 2.1.3
+  bootloaderEntryName: Hard Gaming OS
+  welcome: Willkommen bei Hard Gaming OS
+  welcomeMessage: Entwickelt von Hard Gaming Labs. Wähle deine Installationsoptionen.
+  finished: Installation abgeschlossen
+images:
+  productLogo: logo.png
+  productIcon: logo.png
+  productWelcome: logo.png
+  sidebarBackground: slide1.jpg
+  sidebarLogo: logo.png
+slideshow: show.qml
+style:
+  sidebarBackground: "#101b16"
+  sidebarText: "#f1fff4"
+  sidebarTextSelect: "#54ef61"

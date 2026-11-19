@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+marker="${XDG_STATE_HOME:-$HOME/.local/state}/hard-gaming-os/wallpaper-applied"
+[[ ! -e "$marker" ]] || exit 0
+for attempt in {1..15}; do
+    if plasma-apply-wallpaperimage /usr/share/backgrounds/hard-gaming-os/wallpaper-default.jpg; then
+        mkdir -p "${marker%/*}"
+        touch "$marker"
+        exit 0
+    fi
+    sleep 2
+done
+exit 1

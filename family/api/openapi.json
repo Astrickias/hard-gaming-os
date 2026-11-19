@@ -1,0 +1,269 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Hard Gaming Family API",
+    "version": "0.1.0",
+    "description": "Entwurf: CMS-Backend zu Family Server, keine direkte Browser-zu-Gerät-Kommunikation."
+  },
+  "servers": [
+    {
+      "url": "https://family-api.example.invalid/v1",
+      "description": "Platzhalter, nicht produktiv"
+    }
+  ],
+  "security": [
+    {
+      "serviceToken": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "serviceToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque"
+      }
+    },
+    "schemas": {
+      "Rule": {
+        "type": "object",
+        "required": [
+          "daily_minutes",
+          "timezone",
+          "revision"
+        ],
+        "properties": {
+          "daily_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Europe/Berlin"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "blocked_app_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PairRequest": {
+        "type": "object",
+        "required": [
+          "pairing_code",
+          "child_profile_id"
+        ],
+        "properties": {
+          "pairing_code": {
+            "type": "string"
+          },
+          "child_profile_id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/families/{familyId}/devices": {
+      "get": {
+        "summary": "Geräte einer berechtigten Familie abrufen",
+        "responses": {
+          "200": {
+            "description": "Erfolgreich"
+          },
+          "400": {
+            "description": "Ungültige Eingabe"
+          },
+          "401": {
+            "description": "Nicht authentifiziert"
+          },
+          "403": {
+            "description": "Nicht berechtigt"
+          },
+          "409": {
+            "description": "Versionskonflikt"
+          },
+          "429": {
+            "description": "Rate Limit"
+          }
+        }
+      }
+    },
+    "/families/{familyId}/pairings": {
+      "post": {
+        "summary": "Einmalcode einlösen und Gerät koppeln",
+        "responses": {
+          "200": {
+            "description": "Erfolgreich"
+          },
+          "400": {
+            "description": "Ungültige Eingabe"
+          },
+          "401": {
+            "description": "Nicht authentifiziert"
+          },
+          "403": {
+            "description": "Nicht berechtigt"
+          },
+          "409": {
+            "description": "Versionskonflikt"
+          },
+          "429": {
+            "description": "Rate Limit"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PairRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/rules": {
+      "put": {
+        "summary": "Regeln mit Revision aktualisieren",
+        "responses": {
+          "200": {
+            "description": "Erfolgreich"
+          },
+          "400": {
+            "description": "Ungültige Eingabe"
+          },
+          "401": {
+            "description": "Nicht authentifiziert"
+          },
+          "403": {
+            "description": "Nicht berechtigt"
+          },
+          "409": {
+            "description": "Versionskonflikt"
+          },
+          "429": {
+            "description": "Rate Limit"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Rule"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Aktuelle Regeln abrufen",
+        "responses": {
+          "200": {
+            "description": "Erfolgreich"
+          },
+          "400": {
+            "description": "Ungültige Eingabe"
+          },
+          "401": {
+            "description": "Nicht authentifiziert"
+          },
+          "403": {
+            "description": "Nicht berechtigt"
+          },
+          "409": {
+            "description": "Versionskonflikt"
+          },
+          "429": {
+            "description": "Rate Limit"
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/requests": {
+      "get": {
+        "summary": "Zeit- und App-Anfragen abrufen",
+        "responses": {
+          "200": {
+            "description": "Erfolgreich"
+          },
+          "400": {
+            "description": "Ungültige Eingabe"
+          },
+          "401": {
+            "description": "Nicht authentifiziert"
+          },
+          "403": {
+            "description": "Nicht berechtigt"
+          },
+          "409": {
+            "description": "Versionskonflikt"
+          },
+          "429": {
+            "description": "Rate Limit"
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/requests/{requestId}/approve": {
+      "post": {
+        "summary": "Anfrage genehmigen",
+        "responses": {
+          "200": {
+            "description": "Erfolgreich"
+          },
+          "400": {
+            "description": "Ungültige Eingabe"
+          },
+          "401": {
+            "description": "Nicht authentifiziert"
+          },
+          "403": {
+            "description": "Nicht berechtigt"
+          },
+          "409": {
+            "description": "Versionskonflikt"
+          },
+          "429": {
+            "description": "Rate Limit"
+          }
+        }
+      }
+    },
+    "/devices/{deviceId}/revoke": {
+      "post": {
+        "summary": "Gerät entkoppeln und Token widerrufen",
+        "responses": {
+          "200": {
+            "description": "Erfolgreich"
+          },
+          "400": {
+            "description": "Ungültige Eingabe"
+          },
+          "401": {
+            "description": "Nicht authentifiziert"
+          },
+          "403": {
+            "description": "Nicht berechtigt"
+          },
+          "409": {
+            "description": "Versionskonflikt"
+          },
+          "429": {
+            "description": "Rate Limit"
+          }
+        }
+      }
+    }
+  }
+}

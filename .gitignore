@@ -1,0 +1,9 @@
+# Build-Ausgaben (werden lokal bzw. in der Build-VM erzeugt)
+/build/
+/dist/iso/
+/dist/logs/
+/dist/vm/
+*.iso
+*.pkg.tar.*
+__pycache__/
+*.pyc

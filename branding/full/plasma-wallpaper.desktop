@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Hard Gaming OS Hintergrund
+Exec=/usr/local/libexec/hgos-plasma-wallpaper
+OnlyShowIn=KDE;
+NoDisplay=true

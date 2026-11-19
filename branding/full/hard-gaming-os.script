@@ -1,0 +1,12 @@
+// Scale the supplied logo to fit displays of different sizes.
+logo = Image("logo.png");
+width = Window.GetWidth();
+if (Window.GetHeight() < width) {
+    width = Window.GetHeight();
+}
+width = width * 0.45;
+logo = logo.Scale(width, width);
+sprite = Sprite(logo);
+sprite.SetX(Window.GetWidth() / 2 - width / 2);
+sprite.SetY(Window.GetHeight() / 2 - width / 2);
+sprite.SetZ(100);
